@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>美味點餐</title>
+    <style>
+        /* CSS 樣式 */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .menu-list {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .cart-container {
+            flex: 1;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+        }
+
+        h1 {
+            text-align: center;
+            color: #555;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        h2 {
+            font-size: 1.8em;
+            color: #666;
+            border-left: 5px solid #ff6347;
+            padding-left: 10px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .menu-card {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .item-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #444;
+        }
+
+        .options-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .option-radio {
+            display: flex;
+            align-items: center;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+        .option-radio input[type="radio"] {
+            margin-right: 8px;
+        }
+        
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .quantity-btn {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #ccc;
+            background-color: #f0f0f0;
+            cursor: pointer;
+            border-radius: 50%;
+            font-size: 1em;
+            line-height: 30px;
+            text-align: center;
+        }
+
+        .quantity-btn:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .quantity-input {
+            width: 40px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 5px;
+        }
+
+        .add-to-cart-btn {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s;
+        }
+
+        .add-to-cart-btn:hover {
+            background-color: #218838;
+        }
+
+        /* 購物車樣式 */
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px dashed #ddd;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-details {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .cart-item-name {
+            font-weight: bold;
+        }
+
+        .item-subtotal {
+            font-weight: bold;
+        }
+
+        .cart-total {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #ff6347;
+        }
+
+        .submit-btn-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .submit-btn {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            color: #fff;
+            background-color: #ff6347;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .submit-btn:hover {
+            background-color: #e5533d;
+        }
+
+        .order-number-display {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #ff6347;
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <div class="menu-list">
+        <h1>美味點餐</h1>
+        
+        <h2>主食</h2>
+        
+        <div class="menu-card" data-item-id="grilled-pork">
+            <span class="item-name">烤肉飯</span>
+            <div class="options-group">
+                <label class="option-radio">
+                    <input type="radio" name="grilled-pork-size" value="小" data-price="80" checked>
+                    小 ($80)
+                </label>
+                <label class="option-radio">
+                    <input type="radio" name="grilled-pork-size" value="大" data-price="100">
+                    大 ($100)
+                </label>
+            </div>
+            <div class="quantity-control">
+                <button class="quantity-btn" onclick="updateQuantity(this, -1)">-</button>
+                <input type="number" class="quantity-input" value="1" min="1">
+                <button class="quantity-btn" onclick="updateQuantity(this, 1)">+</button>
+                <button class="add-to-cart-btn" onclick="addToCart('grilled-pork')">加入購物車</button>
+            </div>
+        </div>
+
+        <div class="menu-card" data-item-id="mapo-tofu">
+            <span class="item-name">麻婆豆腐蓋飯</span>
+            <div class="options-group">
+                <label class="option-radio">
+                    <input type="radio" name="mapo-tofu-size" value="小" data-price="90" checked>
+                    小 ($90)
+                </label>
+                <label class="option-radio">
+                    <input type="radio" name="mapo-tofu-size" value="大" data-price="110">
+                    大 ($110)
+                </label>
+            </div>
+            <div class="options-group">
+                <label class="option-radio">
+                    <input type="radio" name="mapo-tofu-spicy" value="小辣" checked>
+                    小辣
+                </label>
+                <label class="option-radio">
+                    <input type="radio" name="mapo-tofu-spicy" value="中辣">
+                    中辣
+                </label>
+                <label class="option-radio">
+                    <input type="radio" name="mapo-tofu-spicy" value="大辣">
+                    大辣
+                </label>
+            </div>
+            <div class="quantity-control">
+                <button class="quantity-btn" onclick="updateQuantity(this, -1)">-</button>
+                <input type="number" class="quantity-input" value="1" min="1">
+                <button class="quantity-btn" onclick="updateQuantity(this, 1)">+</button>
+                <button class="add-to-cart-btn" onclick="addToCart('mapo-tofu')">加入購物車</button>
+            </div>
+        </div>
+
+        <div class="menu-card" data-item-id="stewed-meat">
+            <span class="item-name">馬鈴薯燉肉蓋飯</span>
+            <div class="options-group">
+                <label class="option-radio">
+                    <input type="radio" name="stewed-meat-size" value="小" data-price="95" checked>
+                    小 ($95)
+                </label>
+                <label class="option-radio">
+                    <input type="radio" name="stewed-meat-size" value="大" data-price="115">
+                    大 ($115)
+                </label>
+            </div>
+            <div class="quantity-control">
+                <button class="quantity-btn" onclick="updateQuantity(this, -1)">-</button>
+                <input type="number" class="quantity-input" value="1" min="1">
+                <button class="quantity-btn" onclick="updateQuantity(this, 1)">+</button>
+                <button class="add-to-cart-btn" onclick="addToCart('stewed-meat')">加入購物車</button>
+            </div>
+        </div>
+
+        <h2>點心</h2>
+
+        <div class="menu-card" data-item-id="aiyu">
+            <span class="item-name">愛玉</span>
+            <div class="quantity-control">
+                <button class="quantity-btn" onclick="updateQuantity(this, -1)">-</button>
+                <input type="number" class="quantity-input" value="1" min="1">
+                <button class="quantity-btn" onclick="updateQuantity(this, 1)">+</button>
+                <button class="add-to-cart-btn" onclick="addToCart('aiyu', '點心')">加入購物車</button>
+            </div>
+        </div>
+        
+        <div class="menu-card" data-item-id="mooncake">
+            <span class="item-name">月餅</span>
+            <div class="quantity-control">
+                <button class="quantity-btn" onclick="updateQuantity(this, -1)">-</button>
+                <input type="number" class="quantity-input" value="1" min="1">
+                <button class="quantity-btn" onclick="updateQuantity(this, 1)">+</button>
+                <button class="add-to-cart-btn" onclick="addToCart('mooncake', '點心')">加入購物車</button>
+            </div>
+        </div>
+
+        <h2>飲料</h2>
+
+        <div class="menu-card" data-item-id="black-tea">
+            <span class="item-name">紅茶</span>
+            <div class="options-group">
+                <label class="option-radio">
+                    <input type="radio" name="black-tea-size" value="小" data-price="30" checked>
+                    小 ($30)
+                </label>
+                <label class="option-radio">
+                    <input type="radio" name="black-tea-size" value="大" data-price="40">
+                    大 ($40)
+                </label>
+            </div>
+            <div class="quantity-control">
+                <button class="quantity-btn" onclick="updateQuantity(this, -1)">-</button>
+                <input type="number" class="quantity-input" value="1" min="1">
+                <button class="quantity-btn" onclick="updateQuantity(this, 1)">+</button>
+                <button class="add-to-cart-btn" onclick="addToCart('black-tea')">加入購物車</button>
+            </div>
+        </div>
+        
+        <div class="menu-card" data-item-id="sugarcane-juice">
+            <span class="item-name">甘蔗汁</span>
+            <div class="options-group">
+                <label class="option-radio">
+                    <input type="radio" name="sugarcane-juice-size" value="小" data-price="45" checked>
+                    小 ($45)
+                </label>
+                <label class="option-radio">
+                    <input type="radio" name="sugarcane-juice-size" value="大" data-price="55">
+                    大 ($55)
+                </label>
+            </div>
+            <div class="quantity-control">
+                <button class="quantity-btn" onclick="updateQuantity(this, -1)">-</button>
+                <input type="number" class="quantity-input" value="1" min="1">
+                <button class="quantity-btn" onclick="updateQuantity(this, 1)">+</button>
+                <button class="add-to-cart-btn" onclick="addToCart('sugarcane-juice')">加入購物車</button>
+            </div>
+        </div>
+        
+        <div class="menu-card" data-item-id="sugarcane-green-tea">
+            <span class="item-name">甘蔗青茶</span>
+            <div class="options-group">
+                <label class="option-radio">
+                    <input type="radio" name="sugarcane-green-tea-size" value="小" data-price="45" checked>
+                    小 ($45)
+                </label>
+                <label class="option-radio">
+                    <input type="radio" name="sugarcane-green-tea-size" value="大" data-price="55">
+                    大 ($55)
+                </label>
+            </div>
+            <div class="quantity-control">
+                <button class="quantity-btn" onclick="updateQuantity(this, -1)">-</button>
+                <input type="number" class="quantity-input" value="1" min="1">
+                <button class="quantity-btn" onclick="updateQuantity(this, 1)">+</button>
+                <button class="add-to-cart-btn" onclick="addToCart('sugarcane-green-tea')">加入購物車</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="cart-container">
+        <h2>我的訂單</h2>
+        <div id="cart-items">
+            </div>
+        <div class="cart-total">
+            <span>總價</span>
+            <span id="total-price">$0</span>
+        </div>
+        <div class="submit-btn-container">
+            <p class="order-number-display">訂單編號: <span id="order-number">001</span></p>
+            <button class="submit-btn" onclick="submitOrder()">送出訂單</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // JavaScript 程式碼
+    
+    // 請將 YOUR_GOOGLE_FORM_ID 替換成你的 Google 表單 ID
+    const GOOGLE_FORM_ID = '1FAIpQLSe3glsonqb7w8qAdOZ-4ims5JotMVxIHhMKXy0arpaHgDCgMg';
+
+    // 請將 entry.xxxxx 替換成你 Google 表單中問題的 entry ID
+    const ORDER_ENTRY_ID = 'entry.950738037';
+    
+    let currentOrderNumber = 1;
+    let cart = {}; // 購物車物件，用來儲存已點的項目
+
+    // 菜單資料
+    const menuData = {
+        'grilled-pork': { name: '烤肉飯', prices: { '小': 80, '大': 100 } },
+        'mapo-tofu': { name: '麻婆豆腐蓋飯', prices: { '小': 90, '大': 110 } },
+        'stewed-meat': { name: '馬鈴薯燉肉蓋飯', prices: { '小': 95, '大': 115 } },
+        'aiyu': { name: '愛玉', prices: { '單份': 40 } },
+        'mooncake': { name: '月餅', prices: { '單份': 35 } },
+        'black-tea': { name: '紅茶', prices: { '小': 30, '大': 40 } },
+        'sugarcane-juice': { name: '甘蔗汁', prices: { '小': 45, '大': 55 } },
+        'sugarcane-green-tea': { name: '甘蔗青茶', prices: { '小': 45, '大': 55 } },
+    };
+
+    // 載入時取得訂單編號
+    window.onload = function() {
+        loadOrderNumber();
+        setInterval(checkAndResetOrderNumber, 60000); // 每分鐘檢查一次
+    };
+
+    // 讀取本地儲存的訂單編號
+    function loadOrderNumber() {
+        const storedOrderNumber = localStorage.getItem('orderNumber');
+        const storedDate = localStorage.getItem('orderDate');
+        const today = new Date().toDateString();
+
+        if (storedOrderNumber && storedDate === today) {
+            currentOrderNumber = parseInt(storedOrderNumber);
+        } else {
+            currentOrderNumber = 1;
+            localStorage.setItem('orderDate', today);
+        }
+        updateOrderNumberDisplay();
+    }
+
+    // 檢查並重設訂單編號 (每天午夜)
+    function checkAndResetOrderNumber() {
+        const now = new Date();
+        if (now.getHours() === 0 && now.getMinutes() === 0) {
+            currentOrderNumber = 1;
+            localStorage.setItem('orderNumber', currentOrderNumber);
+            localStorage.setItem('orderDate', now.toDateString());
+            updateOrderNumberDisplay();
+        }
+    }
+
+    // 更新畫面上的訂單編號
+    function updateOrderNumberDisplay() {
+        const formattedNumber = String(currentOrderNumber).padStart(3, '0');
+        document.getElementById('order-number').textContent = formattedNumber;
+    }
+
+    // 數量控制
+    function updateQuantity(btn, change) {
+        const input = btn.parentNode.querySelector('.quantity-input');
+        let value = parseInt(input.value);
+        value += change;
+        if (value >= 1) {
+            input.value = value;
+        }
+    }
+
+    // 加入購物車
+    function addToCart(itemId) {
+        const itemCard = document.querySelector(`[data-item-id="${itemId}"]`);
+        const quantityInput = itemCard.querySelector('.quantity-input');
+        const quantity = parseInt(quantityInput.value);
+
+        if (quantity < 1) {
+            alert('數量必須大於 0');
+            return;
+        }
+
+        const itemName = menuData[itemId].name;
+        let selectedOption = '';
+        let price = 0;
+
+        // 處理有選項的品項
+        if (menuData[itemId].prices) {
+            const sizeRadio = itemCard.querySelector(`input[name="${itemId}-size"]:checked`);
+            if (sizeRadio) {
+                selectedOption += sizeRadio.value;
+                price = parseInt(sizeRadio.dataset.price);
+            }
+
+            // 處理麻婆豆腐的辣度
+            if (itemId === 'mapo-tofu') {
+                const spicyRadio = itemCard.querySelector('input[name="mapo-tofu-spicy"]:checked');
+                if (spicyRadio) {
+                    selectedOption += ` (${spicyRadio.value})`;
+                }
+            }
+        } else {
+            // 處理沒有選項的品項 (點心)
+            selectedOption = '單份';
+            price = menuData[itemId].prices['單份'];
+        }
+
+        const cartKey = `${itemName}-${selectedOption}`;
+
+        if (cart[cartKey]) {
+            cart[cartKey].quantity += quantity;
+        } else {
+            cart[cartKey] = {
+                name: itemName,
+                option: selectedOption,
+                price: price,
+                quantity: quantity
+            };
+        }
+
+        updateCartDisplay();
+    }
+
+    // 更新購物車顯示
+    function updateCartDisplay() {
+        const cartItemsDiv = document.getElementById('cart-items');
+        cartItemsDiv.innerHTML = '';
+        let totalPrice = 0;
+
+        for (const key in cart) {
+            const item = cart[key];
+            const subtotal = item.price * item.quantity;
+            totalPrice += subtotal;
+
+            const cartItemDiv = document.createElement('div');
+            cartItemDiv.className = 'cart-item';
+            cartItemDiv.innerHTML = `
+                <div class="item-details">
+                    <span class="cart-item-name">${item.name} (${item.option})</span>
+                    <small>$${item.price} x ${item.quantity}</small>
+                </div>
+                <span class="item-subtotal">$${subtotal}</span>
+            `;
+            cartItemsDiv.appendChild(cartItemDiv);
+        }
+
+        document.getElementById('total-price').textContent = `$${totalPrice}`;
+    }
+
+    // 送出訂單
+    function submitOrder() {
+        const orderDetails = [];
+        const orderNumber = String(currentOrderNumber).padStart(3, '0');
+        let total = 0;
+
+        if (Object.keys(cart).length === 0) {
+            alert('購物車是空的，請先選擇餐點！');
+            return;
+        }
+
+        orderDetails.push(`訂單編號: ${orderNumber}`);
+        orderDetails.push('');
+
+        for (const key in cart) {
+            const item = cart[key];
+            const subtotal = item.price * item.quantity;
+            total += subtotal;
+            orderDetails.push(`${item.name} (${item.option}) x ${item.quantity} = $${subtotal}`);
+        }
+
+        orderDetails.push('');
+        orderDetails.push(`總價: $${total}`);
+
+        const orderText = orderDetails.join('\n');
+
+        // 增加訂單編號並儲存
+        currentOrderNumber++;
+        localStorage.setItem('orderNumber', currentOrderNumber);
+        updateOrderNumberDisplay();
+        
+        // 導向 Google 表單
+        const formUrl = `https://docs.google.com/forms/d/e/${GOOGLE_FORM_ID}/formResponse?usp=pp_url`;
+        const params = new URLSearchParams();
+        params.append(ORDER_ENTRY_ID, orderText);
+        window.open(`${formUrl}&${params.toString()}`, '_blank');
+        
+        // 清空購物車
+        cart = {};
+        updateCartDisplay();
+    }
+</script>
+
+</body>
+</html>
