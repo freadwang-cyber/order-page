@@ -1,457 +1,366 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>線上點餐</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f7fafc; }
-        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e0; border-radius: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background-color: transparent; }
-        .item-options { display: none; }
-        .message-box-container {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); display: flex; justify-content: center;
-            align-items: center; z-index: 1000;
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
         }
-        .message-box {
-            background-color: white; padding: 2rem; border-radius: 1.5rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); max-width: 90%;
-            text-align: center; animation: fadeIn 0.3s ease-out;
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
         }
+
+        h2 {
+            font-size: 18px;
+            margin-top: 20px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .item-info {
+            flex-grow: 1;
+        }
+
+        .item-info label {
+            font-weight: bold;
+        }
+
+        .item-options {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+        }
+
+        .quantity-control button {
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+        }
+
+        .quantity-control input[type="number"] {
+            width: 40px;
+            text-align: center;
+            border: 1px solid #ccc;
+            margin: 0 5px;
+        }
+
+        .submit-section {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .submit-section button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .summary {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+        }
+
+        .summary p {
+            margin: 5px 0;
+        }
+
+        .phone-input {
+            margin-top: 15px;
+            text-align: center;
+        }
+        .phone-input input {
+            padding: 5px;
+            font-size: 16px;
+            width: 120px;
+        }
+
     </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+<body>
 
-    <div class="w-full max-w-md bg-white rounded-3xl shadow-xl p-6 md:p-8 space-y-6">
+    <div class="container">
+        <h1>線上點餐</h1>
+
+        <div class="summary">
+            <h2>您的訂單</h2>
+            <p>目前沒有商品在訂單中。</p>
+            <p>總計: <span id="total-price">$0</span></p>
+        </div>
         
-        <header class="text-center">
-            <h1 class="text-3xl font-bold text-gray-800">線上點餐</h1>
-            <p class="text-gray-500 mt-1">請選擇您想享用的餐點</p>
-        </header>
+        <form id="orderForm" action="https://docs.google.com/forms/d/e/1FAIpQLSdhFpc-NlcsF2lLo-vj6dctP31sOv1sNHqwT1VONeEEoWay8g/formResponse" method="post" target="_blank">
 
-        <main class="space-y-4 max-h-[70vh] overflow-y-auto custom-scrollbar">
+            <div class="phone-input">
+                <label for="phone-number">請輸入手機末4碼：</label>
+                <input type="text" id="phone-number" name="entry.1315976870" placeholder="後4碼" maxlength="4" required>
+            </div>
 
-            <!-- 主食類別 -->
-            <h2 class="text-xl font-bold text-gray-800 mt-4 mb-2 border-b pb-2">主食</h2>
+            <input type="hidden" name="entry.1578389310" id="order-details-input">
+            <input type="hidden" name="entry.1761228994" id="total-price-input">
 
-            <!-- 烤肉飯 -->
-            <div class="menu-item bg-white p-4 rounded-xl shadow-md cursor-pointer transition-transform transform hover:scale-105 hover:shadow-lg" onclick="toggleOptions(this)">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="item-name font-semibold text-lg text-gray-800">烤肉飯</h3>
-                        <p class="text-gray-500">秘製醬汁、香嫩烤肉</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="item-price font-bold text-xl text-indigo-600">$100</p>
+
+            <h2>主食</h2>
+
+            <div class="order-item" data-item-name="烤肉飯">
+                <div class="item-info">
+                    <label>烤肉飯</label>
+                    <div class="item-options">
+                        <input type="radio" id="bbq-small" name="bbq-size" value="小" data-price="80" checked>
+                        <label for="bbq-small">小 ($80)</label>
+                        <input type="radio" id="bbq-large" name="bbq-size" value="大" data-price="100">
+                        <label for="bbq-large">大 ($100)</label>
                     </div>
                 </div>
-                <div class="item-options mt-4 p-4 bg-gray-50 rounded-lg" onclick="event.stopPropagation()">
-                    <div class="space-y-2">
-                        <div>
-                            <p class="font-medium text-gray-700 mb-1">大小碗</p>
-                            <div class="flex space-x-4">
-                                <label class="inline-flex items-center"><input type="radio" class="form-radio text-indigo-600" name="size_烤肉飯" value="小碗" checked><span class="ml-2 text-gray-600">小碗 (+0)</span></label>
-                                <label class="inline-flex items-center"><input type="radio" class="form-radio text-indigo-600" name="size_烤肉飯" value="大碗"><span class="ml-2 text-gray-600">大碗 (+$20)</span></label>
-                            </div>
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-700 mb-1">數量</p>
-                            <div class="flex items-center space-x-2">
-                                <button class="quantity-btn-minus w-8 h-8 flex items-center justify-center bg-gray-200 text-gray-600 rounded-full text-lg font-bold hover:bg-gray-300 transition-colors" onclick="event.stopPropagation(); updateQuantity(this, -1)">-</button>
-                                <span class="quantity-display w-10 text-center font-bold text-lg">1</span>
-                                <button class="quantity-btn-plus w-8 h-8 flex items-center justify-center bg-indigo-500 text-white rounded-full text-lg font-bold hover:bg-indigo-600 transition-colors" onclick="event.stopPropagation(); updateQuantity(this, 1)">+</button>
-                            </div>
-                        </div>
-                        <button class="add-to-cart-btn w-full mt-4 px-3 py-2 bg-indigo-500 text-white text-base rounded-full shadow-sm hover:bg-indigo-600 transition-colors" onclick="event.stopPropagation(); addToCart(this)">加入購物車</button>
-                    </div>
+                <div class="quantity-control">
+                    <button type="button" onclick="updateQuantity(this, -1)">-</button>
+                    <input type="number" value="0" min="0" data-item="bbq" class="item-quantity">
+                    <button type="button" onclick="updateQuantity(this, 1)">+</button>
                 </div>
             </div>
 
-            <!-- 麻婆豆腐蓋飯 -->
-            <div class="menu-item bg-white p-4 rounded-xl shadow-md cursor-pointer transition-transform transform hover:scale-105 hover:shadow-lg" onclick="toggleOptions(this)">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="item-name font-semibold text-lg text-gray-800">麻婆豆腐蓋飯</h3>
-                        <p class="text-gray-500">香麻帶勁、滑嫩豆腐</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="item-price font-bold text-xl text-indigo-600">$90</p>
-                    </div>
-                </div>
-                <div class="item-options mt-4 p-4 bg-gray-50 rounded-lg" onclick="event.stopPropagation()">
-                    <div class="space-y-2">
-                        <div>
-                            <p class="font-medium text-gray-700 mb-1">大小碗</p>
-                            <div class="flex space-x-4">
-                                <label class="inline-flex items-center"><input type="radio" class="form-radio text-indigo-600" name="size_麻婆豆腐蓋飯" value="小碗" checked><span class="ml-2 text-gray-600">小碗 (+0)</span></label>
-                                <label class="inline-flex items-center"><input type="radio" class="form-radio text-indigo-600" name="size_麻婆豆腐蓋飯" value="大碗"><span class="ml-2 text-gray-600">大碗 (+$20)</span></label>
-                            </div>
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-700 mb-1">辣度</p>
-                            <div class="flex space-x-2 flex-wrap">
-                                <label class="inline-flex items-center"><input type="radio" class="form-radio text-indigo-600" name="spiciness_麻婆豆腐蓋飯" value="不辣" checked><span class="ml-2 text-gray-600">不辣</span></label>
-                                <label class="inline-flex items-center"><input type="radio" class="form-radio text-indigo-600" name="spiciness_麻婆豆腐蓋飯" value="小辣"><span class="ml-2 text-gray-600">小辣</span></label>
-                                <label class="inline-flex items-center"><input type="radio" class="form-radio text-indigo-600" name="spiciness_麻婆豆腐蓋飯" value="中辣"><span class="ml-2 text-gray-600">中辣</span></label>
-                                <label class="inline-flex items-center"><input type="radio" class="form-radio text-indigo-600" name="spiciness_麻婆豆腐蓋飯" value="大辣"><span class="ml-2 text-gray-600">大辣</span></label>
-                            </div>
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-700 mb-1">數量</p>
-                            <div class="flex items-center space-x-2">
-                                <button class="quantity-btn-minus w-8 h-8 flex items-center justify-center bg-gray-200 text-gray-600 rounded-full text-lg font-bold hover:bg-gray-300 transition-colors" onclick="event.stopPropagation(); updateQuantity(this, -1)">-</button>
-                                <span class="quantity-display w-10 text-center font-bold text-lg">1</span>
-                                <button class="quantity-btn-plus w-8 h-8 flex items-center justify-center bg-indigo-500 text-white rounded-full text-lg font-bold hover:bg-indigo-600 transition-colors" onclick="event.stopPropagation(); updateQuantity(this, 1)">+</button>
-                            </div>
-                        </div>
-                        <button class="add-to-cart-btn w-full mt-4 px-3 py-2 bg-indigo-500 text-white text-base rounded-full shadow-sm hover:bg-indigo-600 transition-colors" onclick="event.stopPropagation(); addToCart(this)">加入購物車</button>
+            <div class="order-item" data-item-name="麻婆豆腐蓋飯">
+                <div class="item-info">
+                    <label>麻婆豆腐蓋飯</label>
+                    <div class="item-options">
+                        <input type="radio" id="mapo-small" name="mapo-size" value="小" data-price="90" checked>
+                        <label for="mapo-small">小 ($90)</label>
+                        <input type="radio" id="mapo-large" name="mapo-size" value="大" data-price="110">
+                        <label for="mapo-large">大 ($110)</label>
                     </div>
                 </div>
-            </div>
-
-            <!-- 馬鈴薯燉肉蓋飯 -->
-            <div class="menu-item bg-white p-4 rounded-xl shadow-md cursor-pointer transition-transform transform hover:scale-105 hover:shadow-lg" onclick="toggleOptions(this)">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="item-name font-semibold text-lg text-gray-800">馬鈴薯燉肉蓋飯</h3>
-                        <p class="text-gray-500">日式風味、馬鈴薯軟爛</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="item-price font-bold text-xl text-indigo-600">$110</p>
-                    </div>
+                <div class="item-options">
+                    <input type="radio" id="mapo-mild" name="mapo-spicy" value="小辣">
+                    <label for="mapo-mild">小辣</label>
+                    <input type="radio" id="mapo-medium" name="mapo-spicy" value="中辣">
+                    <label for="mapo-medium">中辣</label>
+                    <input type="radio" id="mapo-hot" name="mapo-spicy" value="大辣">
+                    <label for="mapo-hot">大辣</label>
                 </div>
-                <div class="item-options mt-4 p-4 bg-gray-50 rounded-lg" onclick="event.stopPropagation()">
-                    <div class="space-y-2">
-                        <div>
-                            <p class="font-medium text-gray-700 mb-1">大小碗</p>
-                            <div class="flex space-x-4">
-                                <label class="inline-flex items-center"><input type="radio" class="form-radio text-indigo-600" name="size_馬鈴薯燉肉蓋飯" value="小碗" checked><span class="ml-2 text-gray-600">小碗 (+0)</span></label>
-                                <label class="inline-flex items-center"><input type="radio" class="form-radio text-indigo-600" name="size_馬鈴薯燉肉蓋飯" value="大碗"><span class="ml-2 text-gray-600">大碗 (+$20)</span></label>
-                            </div>
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-700 mb-1">數量</p>
-                            <div class="flex items-center space-x-2">
-                                <button class="quantity-btn-minus w-8 h-8 flex items-center justify-center bg-gray-200 text-gray-600 rounded-full text-lg font-bold hover:bg-gray-300 transition-colors" onclick="event.stopPropagation(); updateQuantity(this, -1)">-</button>
-                                <span class="quantity-display w-10 text-center font-bold text-lg">1</span>
-                                <button class="quantity-btn-plus w-8 h-8 flex items-center justify-center bg-indigo-500 text-white rounded-full text-lg font-bold hover:bg-indigo-600 transition-colors" onclick="event.stopPropagation(); updateQuantity(this, 1)">+</button>
-                            </div>
-                        </div>
-                        <button class="add-to-cart-btn w-full mt-4 px-3 py-2 bg-indigo-500 text-white text-base rounded-full shadow-sm hover:bg-indigo-600 transition-colors" onclick="event.stopPropagation(); addToCart(this)">加入購物車</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 點心類別 -->
-            <h2 class="text-xl font-bold text-gray-800 mt-4 mb-2 border-b pb-2">點心</h2>
-
-            <!-- 愛玉 -->
-            <div class="menu-item bg-white p-4 rounded-xl shadow-md cursor-pointer transition-transform transform hover:scale-105 hover:shadow-lg" onclick="toggleOptions(this)">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="item-name font-semibold text-lg text-gray-800">愛玉</h3>
-                        <p class="text-gray-500">清涼爽口、夏日必備</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="item-price font-bold text-xl text-indigo-600">$50</p>
-                    </div>
-                </div>
-                <div class="item-options mt-4 p-4 bg-gray-50 rounded-lg" onclick="event.stopPropagation()">
-                    <div class="space-y-2">
-                        <div>
-                            <p class="font-medium text-gray-700 mb-1">數量</p>
-                            <div class="flex items-center space-x-2">
-                                <button class="quantity-btn-minus w-8 h-8 flex items-center justify-center bg-gray-200 text-gray-600 rounded-full text-lg font-bold hover:bg-gray-300 transition-colors" onclick="event.stopPropagation(); updateQuantity(this, -1)">-</button>
-                                <span class="quantity-display w-10 text-center font-bold text-lg">1</span>
-                                <button class="quantity-btn-plus w-8 h-8 flex items-center justify-center bg-indigo-500 text-white rounded-full text-lg font-bold hover:bg-indigo-600 transition-colors" onclick="event.stopPropagation(); updateQuantity(this, 1)">+</button>
-                            </div>
-                        </div>
-                        <button class="add-to-cart-btn w-full mt-4 px-3 py-2 bg-indigo-500 text-white text-base rounded-full shadow-sm hover:bg-indigo-600 transition-colors" onclick="event.stopPropagation(); addToCart(this)">加入購物車</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 月餅 -->
-            <div class="menu-item bg-white p-4 rounded-xl shadow-md cursor-pointer transition-transform transform hover:scale-105 hover:shadow-lg" onclick="toggleOptions(this)">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="item-name font-semibold text-lg text-gray-800">月餅</h3>
-                        <p class="text-gray-500">傳統美味、佳節禮品</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="item-price font-bold text-xl text-indigo-600">$80</p>
-                    </div>
-                </div>
-                <div class="item-options mt-4 p-4 bg-gray-50 rounded-lg" onclick="event.stopPropagation()">
-                    <div class="space-y-2">
-                        <div>
-                            <p class="font-medium text-gray-700 mb-1">數量</p>
-                            <div class="flex items-center space-x-2">
-                                <button class="quantity-btn-minus w-8 h-8 flex items-center justify-center bg-gray-200 text-gray-600 rounded-full text-lg font-bold hover:bg-gray-300 transition-colors" onclick="event.stopPropagation(); updateQuantity(this, -1)">-</button>
-                                <span class="quantity-display w-10 text-center font-bold text-lg">1</span>
-                                <button class="quantity-btn-plus w-8 h-8 flex items-center justify-center bg-indigo-500 text-white rounded-full text-lg font-bold hover:bg-indigo-600 transition-colors" onclick="event.stopPropagation(); updateQuantity(this, 1)">+</button>
-                            </div>
-                        </div>
-                        <button class="add-to-cart-btn w-full mt-4 px-3 py-2 bg-indigo-500 text-white text-base rounded-full shadow-sm hover:bg-indigo-600 transition-colors" onclick="event.stopPropagation(); addToCart(this)">加入購物車</button>
-                    </div>
+                <div class="quantity-control">
+                    <button type="button" onclick="updateQuantity(this, -1)">-</button>
+                    <input type="number" value="0" min="0" data-item="mapo" class="item-quantity">
+                    <button type="button" onclick="updateQuantity(this, 1)">+</button>
                 </div>
             </div>
             
-            <!-- 飲料類別 -->
-            <h2 class="text-xl font-bold text-gray-800 mt-4 mb-2 border-b pb-2">飲料</h2>
-
-            <!-- 紅茶 -->
-            <div class="menu-item bg-white p-4 rounded-xl shadow-md cursor-pointer transition-transform transform hover:scale-105 hover:shadow-lg" onclick="toggleOptions(this)">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="item-name font-semibold text-lg text-gray-800">紅茶</h3>
-                        <p class="text-gray-500">香醇回甘、去油解膩</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="item-price font-bold text-xl text-indigo-600">$30</p>
+            <div class="order-item" data-item-name="馬鈴薯燉肉蓋飯">
+                <div class="item-info">
+                    <label>馬鈴薯燉肉蓋飯</label>
+                    <div class="item-options">
+                        <input type="radio" id="potato-small" name="potato-size" value="小" data-price="95" checked>
+                        <label for="potato-small">小 ($95)</label>
+                        <input type="radio" id="potato-large" name="potato-size" value="大" data-price="115">
+                        <label for="potato-large">大 ($115)</label>
                     </div>
                 </div>
-                <div class="item-options mt-4 p-4 bg-gray-50 rounded-lg" onclick="event.stopPropagation()">
-                    <div class="space-y-2">
-                        <div>
-                            <p class="font-medium text-gray-700 mb-1">大小碗</p>
-                            <div class="flex space-x-4">
-                                <label class="inline-flex items-center"><input type="radio" class="form-radio text-indigo-600" name="size_紅茶" value="小杯" checked><span class="ml-2 text-gray-600">小杯 (+0)</span></label>
-                                <label class="inline-flex items-center"><input type="radio" class="form-radio text-indigo-600" name="size_紅茶" value="大杯"><span class="ml-2 text-gray-600">大杯 (+$10)</span></label>
-                            </div>
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-700 mb-1">數量</p>
-                            <div class="flex items-center space-x-2">
-                                <button class="quantity-btn-minus w-8 h-8 flex items-center justify-center bg-gray-200 text-gray-600 rounded-full text-lg font-bold hover:bg-gray-300 transition-colors" onclick="event.stopPropagation(); updateQuantity(this, -1)">-</button>
-                                <span class="quantity-display w-10 text-center font-bold text-lg">1</span>
-                                <button class="quantity-btn-plus w-8 h-8 flex items-center justify-center bg-indigo-500 text-white rounded-full text-lg font-bold hover:bg-indigo-600 transition-colors" onclick="event.stopPropagation(); updateQuantity(this, 1)">+</button>
-                            </div>
-                        </div>
-                        <button class="add-to-cart-btn w-full mt-4 px-3 py-2 bg-indigo-500 text-white text-base rounded-full shadow-sm hover:bg-indigo-600 transition-colors" onclick="event.stopPropagation(); addToCart(this)">加入購物車</button>
-                    </div>
+                <div class="quantity-control">
+                    <button type="button" onclick="updateQuantity(this, -1)">-</button>
+                    <input type="number" value="0" min="0" data-item="potato" class="item-quantity">
+                    <button type="button" onclick="updateQuantity(this, 1)">+</button>
                 </div>
             </div>
 
-            <!-- 甘蔗汁 -->
-            <div class="menu-item bg-white p-4 rounded-xl shadow-md cursor-pointer transition-transform transform hover:scale-105 hover:shadow-lg" onclick="toggleOptions(this)">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="item-name font-semibold text-lg text-gray-800">甘蔗汁</h3>
-                        <p class="text-gray-500">天然清甜、新鮮現榨</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="item-price font-bold text-xl text-indigo-600">$50</p>
-                    </div>
-                </div>
-                <div class="item-options mt-4 p-4 bg-gray-50 rounded-lg" onclick="event.stopPropagation()">
-                    <div class="space-y-2">
-                        <div>
-                            <p class="font-medium text-gray-700 mb-1">大小碗</p>
-                            <div class="flex space-x-4">
-                                <label class="inline-flex items-center"><input type="radio" class="form-radio text-indigo-600" name="size_甘蔗汁" value="小杯" checked><span class="ml-2 text-gray-600">小杯 (+0)</span></label>
-                                <label class="inline-flex items-center"><input type="radio" class="form-radio text-indigo-600" name="size_甘蔗汁" value="大杯"><span class="ml-2 text-gray-600">大杯 (+$10)</span></label>
-                            </div>
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-700 mb-1">數量</p>
-                            <div class="flex items-center space-x-2">
-                                <button class="quantity-btn-minus w-8 h-8 flex items-center justify-center bg-gray-200 text-gray-600 rounded-full text-lg font-bold hover:bg-gray-300 transition-colors" onclick="event.stopPropagation(); updateQuantity(this, -1)">-</button>
-                                <span class="quantity-display w-10 text-center font-bold text-lg">1</span>
-                                <button class="quantity-btn-plus w-8 h-8 flex items-center justify-center bg-indigo-500 text-white rounded-full text-lg font-bold hover:bg-indigo-600 transition-colors" onclick="event.stopPropagation(); updateQuantity(this, 1)">+</button>
-                            </div>
-                        </div>
-                        <button class="add-to-cart-btn w-full mt-4 px-3 py-2 bg-indigo-500 text-white text-base rounded-full shadow-sm hover:bg-indigo-600 transition-colors" onclick="event.stopPropagation(); addToCart(this)">加入購物車</button>
-                    </div>
-                </div>
-            </div>
+            <h2>甜點</h2>
 
-            <!-- 甘蔗青茶 -->
-            <div class="menu-item bg-white p-4 rounded-xl shadow-md cursor-pointer transition-transform transform hover:scale-105 hover:shadow-lg" onclick="toggleOptions(this)">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="item-name font-semibold text-lg text-gray-800">甘蔗青茶</h3>
-                        <p class="text-gray-500">清香甘甜、完美調和</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="item-price font-bold text-xl text-indigo-600">$60</p>
+            <div class="order-item" data-item-name="小米甜甜圈">
+                <div class="item-info">
+                    <label>小米甜甜圈</label>
+                    <div class="item-options">
+                        <span data-price="40">($40)</span>
                     </div>
                 </div>
-                <div class="item-options mt-4 p-4 bg-gray-50 rounded-lg" onclick="event.stopPropagation()">
-                    <div class="space-y-2">
-                        <div>
-                            <p class="font-medium text-gray-700 mb-1">大小碗</p>
-                            <div class="flex space-x-4">
-                                <label class="inline-flex items-center"><input type="radio" class="form-radio text-indigo-600" name="size_甘蔗青茶" value="小杯" checked><span class="ml-2 text-gray-600">小杯 (+0)</span></label>
-                                <label class="inline-flex items-center"><input type="radio" class="form-radio text-indigo-600" name="size_甘蔗青茶" value="大杯"><span class="ml-2 text-gray-600">大杯 (+$10)</span></label>
-                            </div>
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-700 mb-1">數量</p>
-                            <div class="flex items-center space-x-2">
-                                <button class="quantity-btn-minus w-8 h-8 flex items-center justify-center bg-gray-200 text-gray-600 rounded-full text-lg font-bold hover:bg-gray-300 transition-colors" onclick="event.stopPropagation(); updateQuantity(this, -1)">-</button>
-                                <span class="quantity-display w-10 text-center font-bold text-lg">1</span>
-                                <button class="quantity-btn-plus w-8 h-8 flex items-center justify-center bg-indigo-500 text-white rounded-full text-lg font-bold hover:bg-indigo-600 transition-colors" onclick="event.stopPropagation(); updateQuantity(this, 1)">+</button>
-                            </div>
-                        </div>
-                        <button class="add-to-cart-btn w-full mt-4 px-3 py-2 bg-indigo-500 text-white text-base rounded-full shadow-sm hover:bg-indigo-600 transition-colors" onclick="event.stopPropagation(); addToCart(this)">加入購物車</button>
-                    </div>
+                <div class="quantity-control">
+                    <button type="button" onclick="updateQuantity(this, -1)">-</button>
+                    <input type="number" value="0" min="0" data-item="donut" class="item-quantity">
+                    <button type="button" onclick="updateQuantity(this, 1)">+</button>
                 </div>
             </div>
             
-        </main>
-        
-        <footer class="bg-white pt-4 pb-2 border-t-2 border-gray-200">
-            <button id="checkout-btn" class="w-full py-4 bg-indigo-600 text-white font-bold text-xl rounded-full shadow-lg hover:bg-indigo-700 transition-colors">
-                送出訂單 (0)
-            </button>
-        </footer>
+            <div class="order-item" data-item-name="月餅">
+                <div class="item-info">
+                    <label>月餅</label>
+                    <div class="item-options">
+                        <span data-price="50">($50)</span>
+                    </div>
+                </div>
+                <div class="quantity-control">
+                    <button type="button" onclick="updateQuantity(this, -1)">-</button>
+                    <input type="number" value="0" min="0" data-item="mooncake" class="item-quantity">
+                    <button type="button" onclick="updateQuantity(this, 1)">+</button>
+                </div>
+            </div>
+            
+            <div class="order-item" data-item-name="愛玉">
+                <div class="item-info">
+                    <label>愛玉</label>
+                    <div class="item-options">
+                        <span data-price="45">($45)</span>
+                    </div>
+                </div>
+                <div class="quantity-control">
+                    <button type="button" onclick="updateQuantity(this, -1)">-</button>
+                    <input type="number" value="0" min="0" data-item="aiyu" class="item-quantity">
+                    <button type="button" onclick="updateQuantity(this, 1)">+</button>
+                </div>
+            </div>
 
+            <h2>飲料</h2>
+
+            <div class="order-item" data-item-name="紅茶">
+                <div class="item-info">
+                    <label>紅茶</label>
+                    <div class="item-options">
+                        <input type="radio" id="tea-small" name="tea-size" value="小" data-price="30" checked>
+                        <label for="tea-small">小 ($30)</label>
+                        <input type="radio" id="tea-large" name="tea-size" value="大" data-price="40">
+                        <label for="tea-large">大 ($40)</label>
+                    </div>
+                </div>
+                <div class="quantity-control">
+                    <button type="button" onclick="updateQuantity(this, -1)">-</button>
+                    <input type="number" value="0" min="0" data-item="tea" class="item-quantity">
+                    <button type="button" onclick="updateQuantity(this, 1)">+</button>
+                </div>
+            </div>
+            
+            <div class="order-item" data-item-name="甘蔗青茶">
+                <div class="item-info">
+                    <label>甘蔗青茶</label>
+                    <div class="item-options">
+                        <input type="radio" id="sugarcane-small" name="sugarcane-size" value="小" data-price="50" checked>
+                        <label for="sugarcane-small">小 ($50)</label>
+                        <input type="radio" id="sugarcane-large" name="sugarcane-size" value="大" data-price="60">
+                        <label for="sugarcane-large">大 ($60)</label>
+                    </div>
+                </div>
+                <div class="quantity-control">
+                    <button type="button" onclick="updateQuantity(this, -1)">-</button>
+                    <input type="number" value="0" min="0" data-item="sugarcane-tea" class="item-quantity">
+                    <button type="button" onclick="updateQuantity(this, 1)">+</button>
+                </div>
+            </div>
+
+            <div class="submit-section">
+                <button type="submit">送出訂單</button>
+            </div>
+        </form>
     </div>
 
     <script>
-        // 購物車邏輯
-        let cart = [];
-        const checkoutBtn = document.getElementById('checkout-btn');
+        // 計算總價並更新顯示
+        function calculateTotal() {
+            let total = 0;
+            const orderDetails = []; // 存儲訂單詳情的陣列
 
-        // 請在這裡填入您的 Google Apps Script 部署 URL
-        const APPS_SCRIPT_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
+            document.querySelectorAll('.order-item').forEach(item => {
+                const quantityInput = item.querySelector('.item-quantity');
+                const quantity = parseInt(quantityInput.value);
 
-        function showMessage(title, content) {
-            const container = document.createElement('div');
-            container.className = 'message-box-container';
-            container.innerHTML = `
-                <div class="message-box">
-                    <h2 class="text-2xl font-bold mb-4">${title}</h2>
-                    <p class="text-gray-600 text-left">${content}</p>
-                    <button class="mt-6 px-6 py-2 bg-indigo-600 text-white rounded-full shadow-md hover:bg-indigo-700 transition-colors" onclick="this.parentElement.parentElement.remove()">
-                        確定
-                    </button>
-                </div>
-            `;
-            document.body.appendChild(container);
-        }
-        
-        function toggleOptions(element) {
-            const options = element.querySelector('.item-options');
-            // 只在當前被點擊的項目上切換選項，並關閉其他所有已開啟的選項
-            document.querySelectorAll('.item-options').forEach(opt => {
-                if (opt !== options) {
-                    opt.style.display = 'none';
+                if (quantity > 0) {
+                    const itemName = item.dataset.itemName;
+                    let itemPrice = 0;
+                    let itemSize = '';
+                    let itemSpicy = '';
+
+                    // 檢查是否有選項 (例如大小或辣度)
+                    const selectedSize = item.querySelector('input[type="radio"]:checked');
+                    if (selectedSize) {
+                        itemPrice = parseInt(selectedSize.dataset.price);
+                        itemSize = selectedSize.value;
+                    } else {
+                        // 如果沒有選項，直接取 data-price
+                        const priceSpan = item.querySelector('[data-price]');
+                        if (priceSpan) {
+                            itemPrice = parseInt(priceSpan.dataset.price);
+                        }
+                    }
+
+                    const selectedSpicy = item.querySelector('input[name*="spicy"]:checked');
+                    if (selectedSpicy) {
+                        itemSpicy = selectedSpicy.value;
+                    }
+
+                    total += itemPrice * quantity;
+                    
+                    // 組裝訂單詳情字串
+                    let detail = `${itemName}`;
+                    if (itemSize) detail += ` (${itemSize})`;
+                    if (itemSpicy) detail += ` (${itemSpicy})`;
+                    detail += ` x ${quantity}份`;
+                    orderDetails.push(detail);
                 }
             });
-            options.style.display = options.style.display === 'block' ? 'none' : 'block';
+
+            // 更新總價顯示
+            document.getElementById('total-price').textContent = `$${total}`;
+
+            // 更新隱藏的 input 欄位，準備提交給 Google 表單
+            document.getElementById('total-price-input').value = total;
+            document.getElementById('order-details-input').value = orderDetails.join(', ');
         }
 
-        // 新增的函數，用於更新數量
+        // 數量控制按鈕
         function updateQuantity(button, change) {
-            const quantityDisplay = button.parentElement.querySelector('.quantity-display');
-            let currentQuantity = parseInt(quantityDisplay.innerText);
-            currentQuantity += change;
-            if (currentQuantity < 1) {
-                currentQuantity = 1;
+            const quantityInput = button.parentNode.querySelector('.item-quantity');
+            let currentValue = parseInt(quantityInput.value);
+            currentValue += change;
+            if (currentValue < 0) {
+                currentValue = 0;
             }
-            quantityDisplay.innerText = currentQuantity;
-        }
-
-        function addToCart(button) {
-            const menuItem = button.closest('.menu-item');
-            
-            const itemName = menuItem.querySelector('.item-name').innerText;
-            let itemPrice = parseInt(menuItem.querySelector('.item-price').innerText.replace('$', ''));
-
-            const sizeRadio = menuItem.querySelector(`input[name="size_${itemName}"]:checked`);
-            let size = sizeRadio ? sizeRadio.value : '無';
-
-            if (size === '大碗' || size === '大杯') {
-                itemPrice += (itemName === '紅茶' || itemName === '甘蔗汁' || itemName === '甘蔗青茶') ? 10 : 20;
-            }
-            
-            const spicinessRadio = menuItem.querySelector(`input[name="spiciness_${itemName}"]:checked`);
-            const spiciness = spicinessRadio ? spicinessRadio.value : '無';
-            
-            const quantity = parseInt(menuItem.querySelector('.quantity-display').innerText);
-
-            const item = {
-                name: itemName,
-                size: size,
-                spiciness: spiciness,
-                price: itemPrice,
-                quantity: quantity
-            };
-
-            for(let i = 0; i < quantity; i++) {
-                cart.push({ ...item, quantity: 1, total: item.price }); // Push individual items with options
-            }
-
-            updateCartCount();
-            showMessage('成功加入！', `已將「${itemName}」加入購物車。<br>規格：${size}, ${spiciness}，數量：${quantity}`);
-            
-            toggleOptions(menuItem);
-        }
-
-        function updateCartCount() {
-            checkoutBtn.innerText = `送出訂單 (${cart.length})`;
+            quantityInput.value = currentValue;
+            calculateTotal();
         }
         
-        checkoutBtn.addEventListener('click', async () => {
-            if (cart.length === 0) {
-                showMessage('購物車是空的', '請先選擇您想享用的餐點！');
-                return;
-            }
-
-            const loadingMessage = document.createElement('div');
-            loadingMessage.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1001] text-white';
-            loadingMessage.innerHTML = '送出訂單中...';
-            document.body.appendChild(loadingMessage);
-
-            let total = 0;
-            const itemsList = cart.map(item => {
-                total += item.price;
-                let details = item.name;
-                if(item.size !== '無') details += ` (${item.size})`;
-                if(item.spiciness !== '無') details += `, ${item.spiciness}`;
-                return details;
-            }).join(', ');
-            
-            try {
-                const response = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({
-                        mode: 'submitOrder',
-                        orderItems: itemsList,
-                        totalPrice: total
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const result = await response.json();
-                
-                if (result.orderNumber) {
-                    showMessage('訂單已送出', `您的訂單號碼為：${result.orderNumber}`);
-                    cart = [];
-                    updateCartCount();
-                } else {
-                    throw new Error(result.error || '送出訂單失敗');
-                }
-
-            } catch (error) {
-                showMessage('錯誤', `送出訂單時發生錯誤：${error.message}`);
-            } finally {
-                loadingMessage.remove();
-            }
+        // 監聽所有選項的變動，即時更新總價
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', calculateTotal);
         });
+        
+        // 監聽數量輸入框的變動
+        document.querySelectorAll('.item-quantity').forEach(input => {
+            input.addEventListener('change', calculateTotal);
+            input.addEventListener('input', calculateTotal);
+        });
+
+        // 初始化
+        calculateTotal();
     </script>
 </body>
 </html>
