@@ -36,6 +36,7 @@
 
         .order-item {
             display: flex;
+            flex-wrap: wrap; /* 允許項目換行 */
             justify-content: space-between;
             align-items: center;
             padding: 10px 0;
@@ -45,7 +46,7 @@
         .item-info {
             flex-grow: 1;
         }
-
+        
         .item-info label {
             font-weight: bold;
         }
@@ -54,8 +55,18 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            margin-bottom: 5px; /* 為換行後的辣度選項留出空間 */
         }
 
+        /* 辣度選項的樣式 */
+        .spicy-options {
+            width: 100%; /* 讓辣度選項佔滿一行 */
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 5px; /* 增加與上方大小選項的間距 */
+        }
+        
         .quantity-control {
             display: flex;
             align-items: center;
@@ -112,6 +123,14 @@
             width: 120px;
         }
 
+        /* 訂單列表的樣式 */
+        #order-summary-list {
+            text-align: left;
+            margin: 10px 0;
+        }
+        #order-summary-list div {
+            margin-bottom: 5px;
+        }
     </style>
 </head>
 <body>
@@ -121,7 +140,9 @@
 
         <div class="summary">
             <h2>您的訂單</h2>
-            <p>目前沒有商品在訂單中。</p>
+            <div id="order-summary-list">
+                <p>目前沒有商品在訂單中。</p>
+            </div>
             <p>總計: <span id="total-price">$0</span></p>
         </div>
         
@@ -164,14 +185,14 @@
                         <input type="radio" id="mapo-large" name="mapo-size" value="大" data-price="110">
                         <label for="mapo-large">大 ($110)</label>
                     </div>
-                </div>
-                <div class="item-options">
-                    <input type="radio" id="mapo-mild" name="mapo-spicy" value="小辣">
-                    <label for="mapo-mild">小辣</label>
-                    <input type="radio" id="mapo-medium" name="mapo-spicy" value="中辣">
-                    <label for="mapo-medium">中辣</label>
-                    <input type="radio" id="mapo-hot" name="mapo-spicy" value="大辣">
-                    <label for="mapo-hot">大辣</label>
+                    <div class="spicy-options">
+                        <input type="radio" id="mapo-mild" name="mapo-spicy" value="小辣">
+                        <label for="mapo-mild">小辣</label>
+                        <input type="radio" id="mapo-medium" name="mapo-spicy" value="中辣">
+                        <label for="mapo-medium">中辣</label>
+                        <input type="radio" id="mapo-hot" name="mapo-spicy" value="大辣">
+                        <label for="mapo-hot">大辣</label>
+                    </div>
                 </div>
                 <div class="quantity-control">
                     <button type="button" onclick="updateQuantity(this, -1)">-</button>
@@ -288,6 +309,8 @@
         function calculateTotal() {
             let total = 0;
             const orderDetails = []; // 存儲訂單詳情的陣列
+            const orderSummaryList = document.getElementById('order-summary-list');
+            orderSummaryList.innerHTML = ''; // 清空訂單列表
 
             document.querySelectorAll('.order-item').forEach(item => {
                 const quantityInput = item.querySelector('.item-quantity');
@@ -325,8 +348,18 @@
                     if (itemSpicy) detail += ` (${itemSpicy})`;
                     detail += ` x ${quantity}份`;
                     orderDetails.push(detail);
+
+                    // 在訂單摘要中新增一個顯示項目
+                    const orderItemDiv = document.createElement('div');
+                    orderItemDiv.textContent = detail + ` - $${itemPrice * quantity}`;
+                    orderSummaryList.appendChild(orderItemDiv);
                 }
             });
+
+            // 如果訂單列表為空，顯示提示訊息
+            if (orderDetails.length === 0) {
+                orderSummaryList.innerHTML = '<p>目前沒有商品在訂單中。</p>';
+            }
 
             // 更新總價顯示
             document.getElementById('total-price').textContent = `$${total}`;
