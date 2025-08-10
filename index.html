@@ -4,396 +4,304 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>線上點餐</title>
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-
-        h1 {
-            text-align: center;
-            font-size: 24px;
-            border-bottom: 2px solid #333;
-            padding-bottom: 10px;
-        }
-
-        h2 {
-            font-size: 18px;
-            margin-top: 20px;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 5px;
-        }
-
-        .order-item {
-            display: flex;
-            flex-wrap: wrap; /* 允許項目換行 */
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px dashed #eee;
-        }
-
-        .item-info {
-            flex-grow: 1;
-        }
-        
-        .item-info label {
-            font-weight: bold;
-        }
-
-        .item-options {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 5px; /* 為換行後的辣度選項留出空間 */
-        }
-
-        /* 辣度選項的樣式 */
-        .spicy-options {
-            width: 100%; /* 讓辣度選項佔滿一行 */
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-top: 5px; /* 增加與上方大小選項的間距 */
-        }
-        
-        .quantity-control {
-            display: flex;
-            align-items: center;
-        }
-
-        .quantity-control button {
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
-            width: 30px;
-            height: 30px;
-            cursor: pointer;
-        }
-
-        .quantity-control input[type="number"] {
-            width: 40px;
-            text-align: center;
-            border: 1px solid #ccc;
-            margin: 0 5px;
-        }
-
-        .submit-section {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .submit-section button {
-            padding: 10px 20px;
-            background-color: #007BFF;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .summary {
-            text-align: center;
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-        }
-
-        .summary p {
-            margin: 5px 0;
-        }
-
-        .phone-input {
-            margin-top: 15px;
-            text-align: center;
-        }
-        .phone-input input {
-            padding: 5px;
-            font-size: 16px;
-            width: 120px;
-        }
-
-        /* 訂單列表的樣式 */
-        #order-summary-list {
-            text-align: left;
-            margin: 10px 0;
-        }
-        #order-summary-list div {
-            margin-bottom: 5px;
+            font-family: 'Inter', sans-serif;
         }
     </style>
 </head>
-<body>
+<body class="bg-amber-50 flex items-center justify-center min-h-screen p-4">
 
-    <div class="container">
-        <h1>線上點餐</h1>
+    <div class="container bg-white rounded-xl shadow-2xl p-6 md:p-8 w-full max-w-xl">
+        <h1 class="text-3xl font-extrabold text-center text-amber-800 border-b-4 border-amber-200 pb-4 mb-6">線上點餐</h1>
 
-        <div class="summary">
-            <h2>您的訂單</h2>
-            <div id="order-summary-list">
-                <p>目前沒有商品在訂單中。</p>
+        <!-- 訂單摘要區塊 -->
+        <div class="summary bg-amber-100 rounded-xl p-5 mb-6 border border-amber-200">
+            <h2 class="text-xl font-semibold text-center text-amber-700 pb-2 mb-4 border-b border-amber-200">您的訂單</h2>
+            <div id="order-summary-list" class="text-left text-gray-700">
+                <p class="text-gray-400">目前沒有商品在訂單中。</p>
             </div>
-            <p>總計: <span id="total-price">$0</span></p>
+            <p class="text-lg font-bold text-right mt-4 text-amber-800">總計: <span id="total-price" class="text-red-600">$0</span></p>
         </div>
         
         <form id="orderForm" action="https://docs.google.com/forms/d/e/1FAIpQLSdhFpc-NlcsF2lLo-vj6dctP31sOv1sNHqwT1VONeEEoWay8g/formResponse" method="post" target="_blank">
 
-            <div class="phone-input">
-                <label for="phone-number">請輸入手機末4碼：</label>
-                <input type="text" id="phone-number" name="entry.1315976870" placeholder="後4碼" maxlength="4" required>
+            <!-- 手機號碼輸入區塊 -->
+            <div class="phone-input text-center my-4">
+                <label for="phone-number" class="block font-medium text-gray-700 mb-1">請輸入手機末4碼：</label>
+                <input type="text" id="phone-number" name="entry.1315976870" placeholder="後4碼" maxlength="4" required class="border border-amber-300 rounded-lg p-2 text-center w-36 focus:ring-2 focus:ring-amber-500 focus:outline-none transition duration-200">
             </div>
 
+            <!-- Google 表單隱藏欄位 -->
             <input type="hidden" name="entry.1578389310" id="order-details-input">
             <input type="hidden" name="entry.1761228994" id="total-price-input">
 
+            <!-- 主食區塊 -->
+            <h2 class="text-xl font-semibold mt-6 mb-4 text-amber-700 border-b-2 border-amber-200 pb-2">主食</h2>
 
-            <h2>主食</h2>
-
-            <div class="order-item" data-item-name="烤肉飯">
-                <div class="item-info">
-                    <label>烤肉飯</label>
-                    <div class="item-options">
-                        <input type="radio" id="bbq-small" name="bbq-size" value="小" data-price="80" checked>
-                        <label for="bbq-small">小 ($80)</label>
-                        <input type="radio" id="bbq-large" name="bbq-size" value="大" data-price="100">
-                        <label for="bbq-large">大 ($100)</label>
+            <div class="order-item flex flex-col md:flex-row justify-between items-start md:items-center py-4 border-b border-dashed border-amber-100" data-item-name="烤肉飯">
+                <div class="item-info flex-grow">
+                    <label class="font-bold text-gray-800">烤肉飯</label>
+                    <div class="item-options flex items-center gap-4 mt-2">
+                        <input type="radio" id="bbq-small" name="bbq-size" value="小" data-price="80" checked class="accent-amber-500">
+                        <label for="bbq-small" class="text-gray-600">小 ($80)</label>
+                        <input type="radio" id="bbq-large" name="bbq-size" value="大" data-price="100" class="accent-amber-500">
+                        <label for="bbq-large" class="text-gray-600">大 ($100)</label>
                     </div>
                 </div>
-                <div class="quantity-control">
-                    <button type="button" onclick="updateQuantity(this, -1)">-</button>
-                    <input type="number" value="0" min="0" data-item="bbq" class="item-quantity">
-                    <button type="button" onclick="updateQuantity(this, 1)">+</button>
+                <div class="quantity-control flex items-center mt-3 md:mt-0">
+                    <button type="button" onclick="updateQuantity(this, -1)" class="bg-amber-100 text-amber-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-200 transition">-</button>
+                    <input type="number" value="0" min="0" data-item="bbq" class="item-quantity w-12 text-center border-b-2 border-amber-300 mx-2 bg-transparent focus:outline-none">
+                    <button type="button" onclick="updateQuantity(this, 1)" class="bg-amber-100 text-amber-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-200 transition">+</button>
                 </div>
             </div>
 
-            <div class="order-item" data-item-name="麻婆豆腐蓋飯">
-                <div class="item-info">
-                    <label>麻婆豆腐蓋飯</label>
-                    <div class="item-options">
-                        <input type="radio" id="mapo-small" name="mapo-size" value="小" data-price="90" checked>
-                        <label for="mapo-small">小 ($90)</label>
-                        <input type="radio" id="mapo-large" name="mapo-size" value="大" data-price="110">
-                        <label for="mapo-large">大 ($110)</label>
+            <div class="order-item flex flex-col md:flex-row justify-between items-start md:items-center py-4 border-b border-dashed border-amber-100" data-item-name="麻婆豆腐蓋飯">
+                <div class="item-info flex-grow">
+                    <label class="font-bold text-gray-800">麻婆豆腐蓋飯</label>
+                    <div class="item-options flex items-center gap-4 mt-2">
+                        <input type="radio" id="mapo-small" name="mapo-size" value="小" data-price="90" checked class="accent-amber-500">
+                        <label for="mapo-small" class="text-gray-600">小 ($90)</label>
+                        <input type="radio" id="mapo-large" name="mapo-size" value="大" data-price="110" class="accent-amber-500">
+                        <label for="mapo-large" class="text-gray-600">大 ($110)</label>
                     </div>
-                    <div class="spicy-options">
-                        <input type="radio" id="mapo-mild" name="mapo-spicy" value="小辣">
-                        <label for="mapo-mild">小辣</label>
-                        <input type="radio" id="mapo-medium" name="mapo-spicy" value="中辣">
-                        <label for="mapo-medium">中辣</label>
-                        <input type="radio" id="mapo-hot" name="mapo-spicy" value="大辣">
-                        <label for="mapo-hot">大辣</label>
-                    </div>
-                </div>
-                <div class="quantity-control">
-                    <button type="button" onclick="updateQuantity(this, -1)">-</button>
-                    <input type="number" value="0" min="0" data-item="mapo" class="item-quantity">
-                    <button type="button" onclick="updateQuantity(this, 1)">+</button>
-                </div>
-            </div>
-            
-            <div class="order-item" data-item-name="馬鈴薯燉肉蓋飯">
-                <div class="item-info">
-                    <label>馬鈴薯燉肉蓋飯</label>
-                    <div class="item-options">
-                        <input type="radio" id="potato-small" name="potato-size" value="小" data-price="95" checked>
-                        <label for="potato-small">小 ($95)</label>
-                        <input type="radio" id="potato-large" name="potato-size" value="大" data-price="115">
-                        <label for="potato-large">大 ($115)</label>
+                    <div class="spicy-options flex items-center gap-4 mt-2">
+                        <input type="radio" id="mapo-mild" name="mapo-spicy" value="小辣" class="accent-red-500">
+                        <label for="mapo-mild" class="text-gray-600">小辣</label>
+                        <input type="radio" id="mapo-medium" name="mapo-spicy" value="中辣" class="accent-red-500">
+                        <label for="mapo-medium" class="text-gray-600">中辣</label>
+                        <input type="radio" id="mapo-hot" name="mapo-spicy" value="大辣" class="accent-red-500">
+                        <label for="mapo-hot" class="text-gray-600">大辣</label>
                     </div>
                 </div>
-                <div class="quantity-control">
-                    <button type="button" onclick="updateQuantity(this, -1)">-</button>
-                    <input type="number" value="0" min="0" data-item="potato" class="item-quantity">
-                    <button type="button" onclick="updateQuantity(this, 1)">+</button>
-                </div>
-            </div>
-
-            <h2>甜點</h2>
-
-            <div class="order-item" data-item-name="小米甜甜圈">
-                <div class="item-info">
-                    <label>小米甜甜圈</label>
-                    <div class="item-options">
-                        <span data-price="40">($40)</span>
-                    </div>
-                </div>
-                <div class="quantity-control">
-                    <button type="button" onclick="updateQuantity(this, -1)">-</button>
-                    <input type="number" value="0" min="0" data-item="donut" class="item-quantity">
-                    <button type="button" onclick="updateQuantity(this, 1)">+</button>
+                <div class="quantity-control flex items-center mt-3 md:mt-0">
+                    <button type="button" onclick="updateQuantity(this, -1)" class="bg-amber-100 text-amber-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-200 transition">-</button>
+                    <input type="number" value="0" min="0" data-item="mapo" class="item-quantity w-12 text-center border-b-2 border-amber-300 mx-2 bg-transparent focus:outline-none">
+                    <button type="button" onclick="updateQuantity(this, 1)" class="bg-amber-100 text-amber-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-200 transition">+</button>
                 </div>
             </div>
             
-            <div class="order-item" data-item-name="月餅">
-                <div class="item-info">
-                    <label>月餅</label>
-                    <div class="item-options">
-                        <span data-price="50">($50)</span>
+            <div class="order-item flex flex-col md:flex-row justify-between items-start md:items-center py-4 border-b border-dashed border-amber-100" data-item-name="馬鈴薯燉肉蓋飯">
+                <div class="item-info flex-grow">
+                    <label class="font-bold text-gray-800">馬鈴薯燉肉蓋飯</label>
+                    <div class="item-options flex items-center gap-4 mt-2">
+                        <input type="radio" id="potato-small" name="potato-size" value="小" data-price="95" checked class="accent-amber-500">
+                        <label for="potato-small" class="text-gray-600">小 ($95)</label>
+                        <input type="radio" id="potato-large" name="potato-size" value="大" data-price="115" class="accent-amber-500">
+                        <label for="potato-large" class="text-gray-600">大 ($115)</label>
                     </div>
                 </div>
-                <div class="quantity-control">
-                    <button type="button" onclick="updateQuantity(this, -1)">-</button>
-                    <input type="number" value="0" min="0" data-item="mooncake" class="item-quantity">
-                    <button type="button" onclick="updateQuantity(this, 1)">+</button>
+                <div class="quantity-control flex items-center mt-3 md:mt-0">
+                    <button type="button" onclick="updateQuantity(this, -1)" class="bg-amber-100 text-amber-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-200 transition">-</button>
+                    <input type="number" value="0" min="0" data-item="potato" class="item-quantity w-12 text-center border-b-2 border-amber-300 mx-2 bg-transparent focus:outline-none">
+                    <button type="button" onclick="updateQuantity(this, 1)" class="bg-amber-100 text-amber-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-200 transition">+</button>
+                </div>
+            </div>
+
+            <!-- 甜點區塊 -->
+            <h2 class="text-xl font-semibold mt-6 mb-4 text-amber-700 border-b-2 border-amber-200 pb-2">甜點</h2>
+
+            <div class="order-item flex flex-col md:flex-row justify-between items-start md:items-center py-4 border-b border-dashed border-amber-100" data-item-name="小米甜甜圈">
+                <div class="item-info flex-grow">
+                    <label class="font-bold text-gray-800">小米甜甜圈</label>
+                    <div class="item-options mt-2">
+                        <span data-price="40" class="text-gray-600">($40)</span>
+                    </div>
+                </div>
+                <div class="quantity-control flex items-center mt-3 md:mt-0">
+                    <button type="button" onclick="updateQuantity(this, -1)" class="bg-amber-100 text-amber-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-200 transition">-</button>
+                    <input type="number" value="0" min="0" data-item="donut" class="item-quantity w-12 text-center border-b-2 border-amber-300 mx-2 bg-transparent focus:outline-none">
+                    <button type="button" onclick="updateQuantity(this, 1)" class="bg-amber-100 text-amber-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-200 transition">+</button>
                 </div>
             </div>
             
-            <div class="order-item" data-item-name="愛玉">
-                <div class="item-info">
-                    <label>愛玉</label>
-                    <div class="item-options">
-                        <span data-price="45">($45)</span>
+            <div class="order-item flex flex-col md:flex-row justify-between items-start md:items-center py-4 border-b border-dashed border-amber-100" data-item-name="月餅">
+                <div class="item-info flex-grow">
+                    <label class="font-bold text-gray-800">月餅</label>
+                    <div class="item-options mt-2">
+                        <span data-price="50" class="text-gray-600">($50)</span>
                     </div>
                 </div>
-                <div class="quantity-control">
-                    <button type="button" onclick="updateQuantity(this, -1)">-</button>
-                    <input type="number" value="0" min="0" data-item="aiyu" class="item-quantity">
-                    <button type="button" onclick="updateQuantity(this, 1)">+</button>
-                </div>
-            </div>
-
-            <h2>飲料</h2>
-
-            <div class="order-item" data-item-name="紅茶">
-                <div class="item-info">
-                    <label>紅茶</label>
-                    <div class="item-options">
-                        <input type="radio" id="tea-small" name="tea-size" value="小" data-price="30" checked>
-                        <label for="tea-small">小 ($30)</label>
-                        <input type="radio" id="tea-large" name="tea-size" value="大" data-price="40">
-                        <label for="tea-large">大 ($40)</label>
-                    </div>
-                </div>
-                <div class="quantity-control">
-                    <button type="button" onclick="updateQuantity(this, -1)">-</button>
-                    <input type="number" value="0" min="0" data-item="tea" class="item-quantity">
-                    <button type="button" onclick="updateQuantity(this, 1)">+</button>
+                <div class="quantity-control flex items-center mt-3 md:mt-0">
+                    <button type="button" onclick="updateQuantity(this, -1)" class="bg-amber-100 text-amber-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-200 transition">-</button>
+                    <input type="number" value="0" min="0" data-item="mooncake" class="item-quantity w-12 text-center border-b-2 border-amber-300 mx-2 bg-transparent focus:outline-none">
+                    <button type="button" onclick="updateQuantity(this, 1)" class="bg-amber-100 text-amber-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-200 transition">+</button>
                 </div>
             </div>
             
-            <div class="order-item" data-item-name="甘蔗青茶">
-                <div class="item-info">
-                    <label>甘蔗青茶</label>
-                    <div class="item-options">
-                        <input type="radio" id="sugarcane-small" name="sugarcane-size" value="小" data-price="50" checked>
-                        <label for="sugarcane-small">小 ($50)</label>
-                        <input type="radio" id="sugarcane-large" name="sugarcane-size" value="大" data-price="60">
-                        <label for="sugarcane-large">大 ($60)</label>
+            <div class="order-item flex flex-col md:flex-row justify-between items-start md:items-center py-4 border-b border-dashed border-amber-100" data-item-name="愛玉">
+                <div class="item-info flex-grow">
+                    <label class="font-bold text-gray-800">愛玉</label>
+                    <div class="item-options mt-2">
+                        <span data-price="45" class="text-gray-600">($45)</span>
                     </div>
                 </div>
-                <div class="quantity-control">
-                    <button type="button" onclick="updateQuantity(this, -1)">-</button>
-                    <input type="number" value="0" min="0" data-item="sugarcane-tea" class="item-quantity">
-                    <button type="button" onclick="updateQuantity(this, 1)">+</button>
+                <div class="quantity-control flex items-center mt-3 md:mt-0">
+                    <button type="button" onclick="updateQuantity(this, -1)" class="bg-amber-100 text-amber-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-200 transition">-</button>
+                    <input type="number" value="0" min="0" data-item="aiyu" class="item-quantity w-12 text-center border-b-2 border-amber-300 mx-2 bg-transparent focus:outline-none">
+                    <button type="button" onclick="updateQuantity(this, 1)" class="bg-amber-100 text-amber-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-200 transition">+</button>
                 </div>
             </div>
 
-            <div class="submit-section">
-                <button type="submit">送出訂單</button>
+            <!-- 飲料區塊 -->
+            <h2 class="text-xl font-semibold mt-6 mb-4 text-amber-700 border-b-2 border-amber-200 pb-2">飲料</h2>
+
+            <div class="order-item flex flex-col md:flex-row justify-between items-start md:items-center py-4 border-b border-dashed border-amber-100" data-item-name="紅茶">
+                <div class="item-info flex-grow">
+                    <label class="font-bold text-gray-800">紅茶</label>
+                    <div class="item-options flex items-center gap-4 mt-2">
+                        <input type="radio" id="tea-small" name="tea-size" value="小" data-price="30" checked class="accent-amber-500">
+                        <label for="tea-small" class="text-gray-600">小 ($30)</label>
+                        <input type="radio" id="tea-large" name="tea-size" value="大" data-price="40" class="accent-amber-500">
+                        <label for="tea-large" class="text-gray-600">大 ($40)</label>
+                    </div>
+                </div>
+                <div class="quantity-control flex items-center mt-3 md:mt-0">
+                    <button type="button" onclick="updateQuantity(this, -1)" class="bg-amber-100 text-amber-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-200 transition">-</button>
+                    <input type="number" value="0" min="0" data-item="tea" class="item-quantity w-12 text-center border-b-2 border-amber-300 mx-2 bg-transparent focus:outline-none">
+                    <button type="button" onclick="updateQuantity(this, 1)" class="bg-amber-100 text-amber-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-200 transition">+</button>
+                </div>
+            </div>
+            
+            <div class="order-item flex flex-col md:flex-row justify-between items-start md:items-center py-4 border-b border-dashed border-amber-100" data-item-name="甘蔗青茶">
+                <div class="item-info flex-grow">
+                    <label class="font-bold text-gray-800">甘蔗青茶</label>
+                    <div class="item-options flex items-center gap-4 mt-2">
+                        <input type="radio" id="sugarcane-small" name="sugarcane-size" value="小" data-price="50" checked class="accent-amber-500">
+                        <label for="sugarcane-small" class="text-gray-600">小 ($50)</label>
+                        <input type="radio" id="sugarcane-large" name="sugarcane-size" value="大" data-price="60" class="accent-amber-500">
+                        <label for="sugarcane-large" class="text-gray-600">大 ($60)</label>
+                    </div>
+                </div>
+                <div class="quantity-control flex items-center mt-3 md:mt-0">
+                    <button type="button" onclick="updateQuantity(this, -1)" class="bg-amber-100 text-amber-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-200 transition">-</button>
+                    <input type="number" value="0" min="0" data-item="sugarcane-tea" class="item-quantity w-12 text-center border-b-2 border-amber-300 mx-2 bg-transparent focus:outline-none">
+                    <button type="button" onclick="updateQuantity(this, 1)" class="bg-amber-100 text-amber-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-200 transition">+</button>
+                </div>
+            </div>
+
+            <!-- 提交按鈕區塊 -->
+            <div class="submit-section text-center mt-8">
+                <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-6 rounded-full text-lg shadow-xl transition duration-300 ease-in-out transform hover:scale-105">送出訂單</button>
             </div>
         </form>
     </div>
 
+    <!-- 驗證錯誤的自訂彈出視窗 -->
+    <div id="validation-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-white p-8 rounded-xl shadow-2xl max-w-sm w-full text-center">
+            <h3 class="text-2xl font-bold text-red-600 mb-4">錯誤</h3>
+            <p class="text-gray-700 mb-6" id="modal-message">請至少選擇一個商品後再送出訂單。</p>
+            <button id="close-modal-btn" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 px-6 rounded-full transition duration-300">確定</button>
+        </div>
+    </div>
+
     <script>
-        // 計算總價並更新顯示
-        function calculateTotal() {
-            let total = 0;
-            const orderDetails = []; // 存儲訂單詳情的陣列
-            const orderSummaryList = document.getElementById('order-summary-list');
-            orderSummaryList.innerHTML = ''; // 清空訂單列表
+        document.addEventListener('DOMContentLoaded', () => {
+            const orderForm = document.getElementById('orderForm');
+            const validationModal = document.getElementById('validation-modal');
+            const closeModalBtn = document.getElementById('close-modal-btn');
 
-            document.querySelectorAll('.order-item').forEach(item => {
-                const quantityInput = item.querySelector('.item-quantity');
-                const quantity = parseInt(quantityInput.value);
+            // 計算總價並更新顯示
+            function calculateTotal() {
+                let total = 0;
+                const orderDetails = [];
+                const orderSummaryList = document.getElementById('order-summary-list');
+                orderSummaryList.innerHTML = '';
 
-                if (quantity > 0) {
-                    const itemName = item.dataset.itemName;
-                    let itemPrice = 0;
-                    let itemSize = '';
-                    let itemSpicy = '';
+                document.querySelectorAll('.order-item').forEach(item => {
+                    const quantityInput = item.querySelector('.item-quantity');
+                    const quantity = parseInt(quantityInput.value);
 
-                    // 檢查是否有選項 (例如大小或辣度)
-                    const selectedSize = item.querySelector('input[type="radio"]:checked');
-                    if (selectedSize) {
-                        itemPrice = parseInt(selectedSize.dataset.price);
-                        itemSize = selectedSize.value;
-                    } else {
-                        // 如果沒有選項，直接取 data-price
-                        const priceSpan = item.querySelector('[data-price]');
-                        if (priceSpan) {
-                            itemPrice = parseInt(priceSpan.dataset.price);
+                    if (quantity > 0) {
+                        const itemName = item.dataset.itemName;
+                        let itemPrice = 0;
+                        let itemSize = '';
+                        let itemSpicy = '';
+
+                        const selectedSize = item.querySelector('input[type="radio"][name*="size"]:checked');
+                        if (selectedSize) {
+                            itemPrice = parseInt(selectedSize.dataset.price);
+                            itemSize = selectedSize.value;
+                        } else {
+                            const priceSpan = item.querySelector('[data-price]');
+                            if (priceSpan) {
+                                itemPrice = parseInt(priceSpan.dataset.price);
+                            }
                         }
+
+                        const selectedSpicy = item.querySelector('input[name*="spicy"]:checked');
+                        if (selectedSpicy) {
+                            itemSpicy = selectedSpicy.value;
+                        }
+
+                        total += itemPrice * quantity;
+                        
+                        let detail = `${itemName}`;
+                        if (itemSize) detail += ` (${itemSize})`;
+                        if (itemSpicy) detail += ` (${itemSpicy})`;
+                        detail += ` x ${quantity}份`;
+                        orderDetails.push(detail);
+
+                        const orderItemDiv = document.createElement('div');
+                        orderItemDiv.textContent = detail + ` - $${itemPrice * quantity}`;
+                        orderSummaryList.appendChild(orderItemDiv);
                     }
+                });
 
-                    const selectedSpicy = item.querySelector('input[name*="spicy"]:checked');
-                    if (selectedSpicy) {
-                        itemSpicy = selectedSpicy.value;
-                    }
+                if (orderDetails.length === 0) {
+                    orderSummaryList.innerHTML = '<p class="text-gray-400">目前沒有商品在訂單中。</p>';
+                }
 
-                    total += itemPrice * quantity;
-                    
-                    // 組裝訂單詳情字串
-                    let detail = `${itemName}`;
-                    if (itemSize) detail += ` (${itemSize})`;
-                    if (itemSpicy) detail += ` (${itemSpicy})`;
-                    detail += ` x ${quantity}份`;
-                    orderDetails.push(detail);
+                document.getElementById('total-price').textContent = `$${total}`;
+                document.getElementById('total-price-input').value = total;
+                document.getElementById('order-details-input').value = orderDetails.join(', ');
+            }
 
-                    // 在訂單摘要中新增一個顯示項目
-                    const orderItemDiv = document.createElement('div');
-                    orderItemDiv.textContent = detail + ` - $${itemPrice * quantity}`;
-                    orderSummaryList.appendChild(orderItemDiv);
+            // 數量控制按鈕
+            window.updateQuantity = function(button, change) {
+                const quantityInput = button.parentNode.querySelector('.item-quantity');
+                let currentValue = parseInt(quantityInput.value);
+                currentValue += change;
+                if (currentValue < 0) {
+                    currentValue = 0;
+                }
+                quantityInput.value = currentValue;
+                calculateTotal();
+            };
+            
+            // 監聽所有選項的變動，即時更新總價
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.addEventListener('change', calculateTotal);
+            });
+            
+            // 監聽數量輸入框的變動
+            document.querySelectorAll('.item-quantity').forEach(input => {
+                input.addEventListener('change', calculateTotal);
+                input.addEventListener('input', calculateTotal);
+            });
+
+            // 提交表單時進行驗證
+            orderForm.addEventListener('submit', (event) => {
+                const total = parseInt(document.getElementById('total-price-input').value);
+                
+                if (total === 0) {
+                    event.preventDefault(); // 阻止表單提交
+                    validationModal.classList.remove('hidden'); // 顯示彈出視窗
                 }
             });
 
-            // 如果訂單列表為空，顯示提示訊息
-            if (orderDetails.length === 0) {
-                orderSummaryList.innerHTML = '<p>目前沒有商品在訂單中。</p>';
-            }
+            // 關閉彈出視窗
+            closeModalBtn.addEventListener('click', () => {
+                validationModal.classList.add('hidden');
+            });
 
-            // 更新總價顯示
-            document.getElementById('total-price').textContent = `$${total}`;
-
-            // 更新隱藏的 input 欄位，準備提交給 Google 表單
-            document.getElementById('total-price-input').value = total;
-            document.getElementById('order-details-input').value = orderDetails.join(', ');
-        }
-
-        // 數量控制按鈕
-        function updateQuantity(button, change) {
-            const quantityInput = button.parentNode.querySelector('.item-quantity');
-            let currentValue = parseInt(quantityInput.value);
-            currentValue += change;
-            if (currentValue < 0) {
-                currentValue = 0;
-            }
-            quantityInput.value = currentValue;
+            // 初始化
             calculateTotal();
-        }
-        
-        // 監聽所有選項的變動，即時更新總價
-        document.querySelectorAll('input[type="radio"]').forEach(radio => {
-            radio.addEventListener('change', calculateTotal);
         });
-        
-        // 監聽數量輸入框的變動
-        document.querySelectorAll('.item-quantity').forEach(input => {
-            input.addEventListener('change', calculateTotal);
-            input.addEventListener('input', calculateTotal);
-        });
-
-        // 初始化
-        calculateTotal();
     </script>
 </body>
 </html>
