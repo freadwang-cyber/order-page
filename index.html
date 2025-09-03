@@ -20,7 +20,7 @@
 
         <!-- 訂單摘要區塊 -->
         <div class="summary bg-amber-100 rounded-xl p-5 mb-6 border border-amber-200">
-            <h2 class="text-xl font-semibold text-center text-amber-700 pb-2 mb-4 border-b border-amber-200">您的訂單</h2>
+            <h2 class="text-xl font-semibold text-center text-amber-700 pb-2 mb-4 border-b border-200">您的訂單</h2>
             <div id="order-summary-list" class="text-left text-gray-700">
                 <p class="text-gray-400">目前沒有商品在訂單中。</p>
             </div>
@@ -42,31 +42,15 @@
             <!-- 主食區塊 -->
             <h2 class="text-xl font-semibold mt-6 mb-4 text-amber-700 border-b-2 border-amber-200 pb-2">主食</h2>
 
-            <div class="order-item flex flex-col md:flex-row justify-between items-start md:items-center py-4 border-b border-dashed border-amber-100" data-item-name="烤肉飯">
-                <div class="item-info flex-grow">
-                    <label class="font-bold text-gray-800">烤肉飯</label>
-                    <div class="item-options flex items-center gap-4 mt-2">
-                        <input type="radio" id="bbq-small" name="bbq-size" value="小" data-price="80" checked class="accent-amber-500">
-                        <label for="bbq-small" class="text-gray-600">小 ($80)</label>
-                        <input type="radio" id="bbq-large" name="bbq-size" value="大" data-price="100" class="accent-amber-500">
-                        <label for="bbq-large" class="text-gray-600">大 ($100)</label>
-                    </div>
-                </div>
-                <div class="quantity-control flex items-center mt-3 md:mt-0">
-                    <button type="button" onclick="updateQuantity(this, -1)" class="bg-amber-100 text-amber-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-200 transition">-</button>
-                    <input type="number" value="0" min="0" data-item="bbq" class="item-quantity w-12 text-center border-b-2 border-amber-300 mx-2 bg-transparent focus:outline-none">
-                    <button type="button" onclick="updateQuantity(this, 1)" class="bg-amber-100 text-amber-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-200 transition">+</button>
-                </div>
-            </div>
-
+            <!-- 麻婆豆腐蓋飯 - 已移動到最前面 -->
             <div class="order-item flex flex-col md:flex-row justify-between items-start md:items-center py-4 border-b border-dashed border-amber-100" data-item-name="麻婆豆腐蓋飯">
                 <div class="item-info flex-grow">
                     <label class="font-bold text-gray-800">麻婆豆腐蓋飯</label>
                     <div class="item-options flex items-center gap-4 mt-2">
-                        <input type="radio" id="mapo-small" name="mapo-size" value="小" data-price="90" checked class="accent-amber-500">
-                        <label for="mapo-small" class="text-gray-600">小 ($90)</label>
-                        <input type="radio" id="mapo-large" name="mapo-size" value="大" data-price="110" class="accent-amber-500">
-                        <label for="mapo-large" class="text-gray-600">大 ($110)</label>
+                        <input type="radio" id="mapo-small" name="mapo-size" value="小" data-price="65" checked class="accent-amber-500">
+                        <label for="mapo-small" class="text-gray-600">小 ($65)</label>
+                        <input type="radio" id="mapo-large" name="mapo-size" value="大" data-price="75" class="accent-amber-500">
+                        <label for="mapo-large" class="text-gray-600">大 ($75)</label>
                     </div>
                     <div class="spicy-options flex items-center gap-4 mt-2">
                         <input type="radio" id="mapo-mild" name="mapo-spicy" value="小辣" class="accent-red-500">
@@ -84,64 +68,56 @@
                 </div>
             </div>
             
-            <div class="order-item flex flex-col md:flex-row justify-between items-start md:items-center py-4 border-b border-dashed border-amber-100" data-item-name="馬鈴薯燉肉蓋飯">
+            <!-- 馬鈴薯燉肉蓋飯 (豬) - 價格相同，排序不變 -->
+            <div class="order-item flex flex-col md:flex-row justify-between items-start md:items-center py-4 border-b border-dashed border-amber-100" data-item-name="馬鈴薯燉肉蓋飯 (豬)">
                 <div class="item-info flex-grow">
-                    <label class="font-bold text-gray-800">馬鈴薯燉肉蓋飯</label>
+                    <label class="font-bold text-gray-800">馬鈴薯燉肉蓋飯 (豬)</label>
                     <div class="item-options flex items-center gap-4 mt-2">
-                        <input type="radio" id="potato-small" name="potato-size" value="小" data-price="95" checked class="accent-amber-500">
-                        <label for="potato-small" class="text-gray-600">小 ($95)</label>
-                        <input type="radio" id="potato-large" name="potato-size" value="大" data-price="115" class="accent-amber-500">
-                        <label for="potato-large" class="text-gray-600">大 ($115)</label>
+                        <input type="radio" id="potato-small" name="potato-size" value="小" data-price="65" checked class="accent-amber-500">
+                        <label for="potato-small" class="text-gray-600">小 ($65)</label>
+                        <input type="radio" id="potato-large" name="potato-size" value="大" data-price="75" class="accent-amber-500">
+                        <label for="potato-large" class="text-gray-600">大 ($75)</label>
                     </div>
                 </div>
                 <div class="quantity-control flex items-center mt-3 md:mt-0">
                     <button type="button" onclick="updateQuantity(this, -1)" class="bg-amber-100 text-amber-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-200 transition">-</button>
-                    <input type="number" value="0" min="0" data-item="potato" class="item-quantity w-12 text-center border-b-2 border-amber-300 mx-2 bg-transparent focus:outline-none">
+                    <input type="number" value="0" min="0" data-item="potato-pork" class="item-quantity w-12 text-center border-b-2 border-amber-300 mx-2 bg-transparent focus:outline-none">
                     <button type="button" onclick="updateQuantity(this, 1)" class="bg-amber-100 text-amber-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-200 transition">+</button>
                 </div>
             </div>
 
-            <!-- 甜點區塊 -->
-            <h2 class="text-xl font-semibold mt-6 mb-4 text-amber-700 border-b-2 border-amber-200 pb-2">甜點</h2>
+            <!-- 馬鈴薯燉肉蓋飯 (牛) -->
+            <div class="order-item flex flex-col md:flex-row justify-between items-start md:items-center py-4 border-b border-dashed border-amber-100" data-item-name="馬鈴薯燉肉蓋飯 (牛)">
+                <div class="item-info flex-grow">
+                    <label class="font-bold text-gray-800">馬鈴薯燉肉蓋飯 (牛)</label>
+                    <div class="item-options flex items-center gap-4 mt-2">
+                        <input type="radio" id="beef-potato-small" name="beef-potato-size" value="小" data-price="75" checked class="accent-amber-500">
+                        <label for="beef-potato-small" class="text-gray-600">小 ($75)</label>
+                        <input type="radio" id="beef-potato-large" name="beef-potato-size" value="大" data-price="85" class="accent-amber-500">
+                        <label for="beef-potato-large" class="text-gray-600">大 ($85)</label>
+                    </div>
+                </div>
+                <div class="quantity-control flex items-center mt-3 md:mt-0">
+                    <button type="button" onclick="updateQuantity(this, -1)" class="bg-amber-100 text-amber-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-200 transition">-</button>
+                    <input type="number" value="0" min="0" data-item="potato-beef" class="item-quantity w-12 text-center border-b-2 border-amber-300 mx-2 bg-transparent focus:outline-none">
+                    <button type="button" onclick="updateQuantity(this, 1)" class="bg-amber-100 text-amber-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-200 transition">+</button>
+                </div>
+            </div>
 
-            <div class="order-item flex flex-col md:flex-row justify-between items-start md:items-center py-4 border-b border-dashed border-amber-100" data-item-name="小米甜甜圈">
+            <!-- 烤肉飯 - 已移動到價格正確的位置 -->
+            <div class="order-item flex flex-col md:flex-row justify-between items-start md:items-center py-4 border-b border-dashed border-amber-100" data-item-name="烤肉飯">
                 <div class="item-info flex-grow">
-                    <label class="font-bold text-gray-800">小米甜甜圈</label>
-                    <div class="item-options mt-2">
-                        <span data-price="40" class="text-gray-600">($40)</span>
+                    <label class="font-bold text-gray-800">烤肉飯</label>
+                    <div class="item-options flex items-center gap-4 mt-2">
+                        <input type="radio" id="bbq-small" name="bbq-size" value="小" data-price="85" checked class="accent-amber-500">
+                        <label for="bbq-small" class="text-gray-600">小 ($85)</label>
+                        <input type="radio" id="bbq-large" name="bbq-size" value="大" data-price="95" class="accent-amber-500">
+                        <label for="bbq-large" class="text-gray-600">大 ($95)</label>
                     </div>
                 </div>
                 <div class="quantity-control flex items-center mt-3 md:mt-0">
                     <button type="button" onclick="updateQuantity(this, -1)" class="bg-amber-100 text-amber-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-200 transition">-</button>
-                    <input type="number" value="0" min="0" data-item="donut" class="item-quantity w-12 text-center border-b-2 border-amber-300 mx-2 bg-transparent focus:outline-none">
-                    <button type="button" onclick="updateQuantity(this, 1)" class="bg-amber-100 text-amber-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-200 transition">+</button>
-                </div>
-            </div>
-            
-            <div class="order-item flex flex-col md:flex-row justify-between items-start md:items-center py-4 border-b border-dashed border-amber-100" data-item-name="月餅">
-                <div class="item-info flex-grow">
-                    <label class="font-bold text-gray-800">月餅</label>
-                    <div class="item-options mt-2">
-                        <span data-price="50" class="text-gray-600">($50)</span>
-                    </div>
-                </div>
-                <div class="quantity-control flex items-center mt-3 md:mt-0">
-                    <button type="button" onclick="updateQuantity(this, -1)" class="bg-amber-100 text-amber-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-200 transition">-</button>
-                    <input type="number" value="0" min="0" data-item="mooncake" class="item-quantity w-12 text-center border-b-2 border-amber-300 mx-2 bg-transparent focus:outline-none">
-                    <button type="button" onclick="updateQuantity(this, 1)" class="bg-amber-100 text-amber-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-200 transition">+</button>
-                </div>
-            </div>
-            
-            <div class="order-item flex flex-col md:flex-row justify-between items-start md:items-center py-4 border-b border-dashed border-amber-100" data-item-name="愛玉">
-                <div class="item-info flex-grow">
-                    <label class="font-bold text-gray-800">愛玉</label>
-                    <div class="item-options mt-2">
-                        <span data-price="45" class="text-gray-600">($45)</span>
-                    </div>
-                </div>
-                <div class="quantity-control flex items-center mt-3 md:mt-0">
-                    <button type="button" onclick="updateQuantity(this, -1)" class="bg-amber-100 text-amber-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-200 transition">-</button>
-                    <input type="number" value="0" min="0" data-item="aiyu" class="item-quantity w-12 text-center border-b-2 border-amber-300 mx-2 bg-transparent focus:outline-none">
+                    <input type="number" value="0" min="0" data-item="bbq" class="item-quantity w-12 text-center border-b-2 border-amber-300 mx-2 bg-transparent focus:outline-none">
                     <button type="button" onclick="updateQuantity(this, 1)" class="bg-amber-100 text-amber-700 w-8 h-8 rounded-full flex items-center justify-center hover:bg-amber-200 transition">+</button>
                 </div>
             </div>
@@ -149,14 +125,15 @@
             <!-- 飲料區塊 -->
             <h2 class="text-xl font-semibold mt-6 mb-4 text-amber-700 border-b-2 border-amber-200 pb-2">飲料</h2>
 
-            <div class="order-item flex flex-col md:flex-row justify-between items-start md:items-center py-4 border-b border-dashed border-amber-100" data-item-name="紅茶">
+            <!-- 紅茶 (冰) - 已新增 "(冰)" -->
+            <div class="order-item flex flex-col md:flex-row justify-between items-start md:items-center py-4 border-b border-dashed border-amber-100" data-item-name="紅茶 (冰)">
                 <div class="item-info flex-grow">
-                    <label class="font-bold text-gray-800">紅茶</label>
+                    <label class="font-bold text-gray-800">紅茶 (冰)</label>
                     <div class="item-options flex items-center gap-4 mt-2">
-                        <input type="radio" id="tea-small" name="tea-size" value="小" data-price="30" checked class="accent-amber-500">
-                        <label for="tea-small" class="text-gray-600">小 ($30)</label>
-                        <input type="radio" id="tea-large" name="tea-size" value="大" data-price="40" class="accent-amber-500">
-                        <label for="tea-large" class="text-gray-600">大 ($40)</label>
+                        <input type="radio" id="tea-small" name="tea-size" value="小" data-price="15" checked class="accent-amber-500">
+                        <label for="tea-small" class="text-gray-600">小 ($15)</label>
+                        <input type="radio" id="tea-large" name="tea-size" value="大" data-price="20" class="accent-amber-500">
+                        <label for="tea-large" class="text-gray-600">大 ($20)</label>
                     </div>
                 </div>
                 <div class="quantity-control flex items-center mt-3 md:mt-0">
@@ -166,14 +143,15 @@
                 </div>
             </div>
             
-            <div class="order-item flex flex-col md:flex-row justify-between items-start md:items-center py-4 border-b border-dashed border-amber-100" data-item-name="甘蔗青茶">
+            <!-- 甘蔗青茶 (冰) - 已新增 "(冰)" -->
+            <div class="order-item flex flex-col md:flex-row justify-between items-start md:items-center py-4 border-b border-dashed border-amber-100" data-item-name="甘蔗青茶 (冰)">
                 <div class="item-info flex-grow">
-                    <label class="font-bold text-gray-800">甘蔗青茶</label>
+                    <label class="font-bold text-gray-800">甘蔗青茶 (冰)</label>
                     <div class="item-options flex items-center gap-4 mt-2">
-                        <input type="radio" id="sugarcane-small" name="sugarcane-size" value="小" data-price="50" checked class="accent-amber-500">
-                        <label for="sugarcane-small" class="text-gray-600">小 ($50)</label>
-                        <input type="radio" id="sugarcane-large" name="sugarcane-size" value="大" data-price="60" class="accent-amber-500">
-                        <label for="sugarcane-large" class="text-gray-600">大 ($60)</label>
+                        <input type="radio" id="sugarcane-small" name="sugarcane-size" value="小" data-price="35" checked class="accent-amber-500">
+                        <label for="sugarcane-small" class="text-gray-600">小 ($35)</label>
+                        <input type="radio" id="sugarcane-large" name="sugarcane-size" value="大" data-price="45" class="accent-amber-500">
+                        <label for="sugarcane-large" class="text-gray-600">大 ($45)</label>
                     </div>
                 </div>
                 <div class="quantity-control flex items-center mt-3 md:mt-0">
@@ -227,6 +205,7 @@
                             itemPrice = parseInt(selectedSize.dataset.price);
                             itemSize = selectedSize.value;
                         } else {
+                            // This part of the code is not needed since all items have size options
                             const priceSpan = item.querySelector('[data-price]');
                             if (priceSpan) {
                                 itemPrice = parseInt(priceSpan.dataset.price);
