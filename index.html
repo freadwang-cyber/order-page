@@ -218,18 +218,25 @@
                         const orderItemDiv = document.createElement('div');
                         orderItemDiv.className = 'flex justify-between items-center py-1';
                         
-                        let itemDescription = `${item.name}`;
-                        if (item.size) itemDescription += ` (${item.size})`;
-                        if (item.spicy) itemDescription += ` (${item.spicy})`;
-                        itemDescription += ` x ${item.quantity}份`;
+                        let itemDescriptionForDisplay = `${item.name}`;
+                        if (item.size) itemDescriptionForDisplay += ` (${item.size})`;
+                        if (item.spicy) itemDescriptionForDisplay += ` (${item.spicy})`;
+                        itemDescriptionForDisplay += ` x ${item.quantity}份`;
 
                         orderItemDiv.innerHTML = `
-                            <span>${itemDescription} - $${item.price * item.quantity}</span>
+                            <span>${itemDescriptionForDisplay} - $${item.price * item.quantity}</span>
                             <button type="button" class="remove-item-btn text-red-500 hover:text-red-700 transition" data-index="${index}">移除</button>
                         `;
                         orderSummaryList.appendChild(orderItemDiv);
                         total += item.price * item.quantity;
-                        orderDetails.push(itemDescription);
+
+                        // 核心修改: 根據數量重複加入訂單詳情
+                        let itemDescriptionForForm = `${item.name}`;
+                        if (item.size) itemDescriptionForForm += ` (${item.size})`;
+                        if (item.spicy) itemDescriptionForForm += ` (${item.spicy})`;
+                        for (let i = 0; i < item.quantity; i++) {
+                            orderDetails.push(itemDescriptionForForm);
+                        }
                     });
                 }
 
@@ -253,15 +260,29 @@
                 const selectedSize = itemContainer.querySelector('input[name*="size"]:checked');
                 const selectedSpicy = itemContainer.querySelector('input[name*="spicy"]:checked');
                 
-                const item = {
-                    name: itemName,
-                    size: selectedSize ? selectedSize.value : '',
-                    price: selectedSize ? parseInt(selectedSize.dataset.price) : 0,
-                    spicy: selectedSpicy ? selectedSpicy.value : '',
-                    quantity: quantity
-                };
+                // 檢查購物車中是否已存在相同項目
+                const existingItemIndex = cartItems.findIndex(cartItem => {
+                    const isNameMatch = cartItem.name === itemName;
+                    const isSizeMatch = (selectedSize && cartItem.size === selectedSize.value) || (!selectedSize && !cartItem.size);
+                    const isSpicyMatch = (selectedSpicy && cartItem.spicy === selectedSpicy.value) || (!selectedSpicy && !cartItem.spicy);
+                    return isNameMatch && isSizeMatch && isSpicyMatch;
+                });
 
-                cartItems.push(item);
+                if (existingItemIndex !== -1) {
+                    // 如果找到相同項目，則增加數量
+                    cartItems[existingItemIndex].quantity += quantity;
+                } else {
+                    // 如果沒有找到，則新增項目
+                    const item = {
+                        name: itemName,
+                        size: selectedSize ? selectedSize.value : '',
+                        price: selectedSize ? parseInt(selectedSize.dataset.price) : 0,
+                        spicy: selectedSpicy ? selectedSpicy.value : '',
+                        quantity: quantity
+                    };
+                    cartItems.push(item);
+                }
+
                 renderCart();
 
                 // 重設數量顯示
