@@ -186,7 +186,9 @@
     <div id="validation-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
         <div class="bg-white p-8 rounded-xl shadow-2xl max-w-sm w-full text-center">
             <h3 class="text-2xl font-bold text-red-600 mb-4" id="modal-heading">錯誤</h3>
-            <p class="text-gray-700 mb-6" id="modal-message">請至少選擇一個商品後再送出訂單。</p>
+            <div id="modal-message" class="text-gray-700 mb-6 flex flex-col items-center">
+                <p>請至少選擇一個商品後再送出訂單。</p>
+            </div>
             <button id="close-modal-btn" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 px-6 rounded-full transition duration-300">確定</button>
         </div>
     </div>
@@ -202,6 +204,7 @@
             const totalPriceInput = document.getElementById('total-price-input');
             const phoneNumberInput = document.getElementById('phone-number');
             const modalHeading = document.getElementById('modal-heading');
+            const modalMessage = document.getElementById('modal-message');
 
             let cartItems = [];
 
@@ -332,13 +335,13 @@
                     modalHeading.textContent = '錯誤';
                     modalHeading.classList.add('text-red-600');
                     modalHeading.classList.remove('text-green-600');
-                    document.getElementById('modal-message').textContent = '請至少選擇一個商品後再送出訂單。';
+                    modalMessage.innerHTML = '<p>請至少選擇一個商品後再送出訂單。</p>';
                     hasError = true;
                 } else if (!/^\d{4}$/.test(phoneNumber)) {
                     modalHeading.textContent = '錯誤';
                     modalHeading.classList.add('text-red-600');
                     modalHeading.classList.remove('text-green-600');
-                    document.getElementById('modal-message').textContent = '請輸入正確的手機末4碼 (4位數字)。';
+                    modalMessage.innerHTML = '<p>請輸入正確的手機末4碼 (4位數字)。</p>';
                     hasError = true;
                 }
 
@@ -359,24 +362,39 @@
                         mode: 'no-cors' // Google Forms 需要這個模式
                     });
 
+                    // 新增功能: 取得訂單內容並顯示
+                    const orderContent = cartItems.map(item => {
+                        let description = `${item.name}`;
+                        if (item.size) description += ` (${item.size})`;
+                        if (item.spicy) description += ` (${item.spicy})`;
+                        return `<li>${description} x ${item.quantity}份 - $${item.price * item.quantity}</li>`;
+                    }).join('');
+
+                    // 顯示訂單成功訊息和內容
+                    modalHeading.textContent = '訂單已送出';
+                    modalHeading.classList.add('text-green-600');
+                    modalHeading.classList.remove('text-red-600');
+                    modalMessage.innerHTML = `
+                        <p class="mb-2">您的訂單已成功送出，感謝您的購買！</p>
+                        <p class="font-bold text-amber-800">訂單內容:</p>
+                        <ul class="list-disc list-inside text-left">
+                            ${orderContent}
+                        </ul>
+                        <p class="font-bold text-lg mt-2">總計: <span class="text-red-600">$${total}</span></p>
+                    `;
+                    validationModal.classList.remove('hidden');
+
                     // 清空購物車和手機號碼
                     cartItems = [];
                     renderCart();
                     phoneNumberInput.value = '';
-
-                    // 顯示訂單成功訊息
-                    modalHeading.textContent = '訂單已送出';
-                    modalHeading.classList.add('text-green-600');
-                    modalHeading.classList.remove('text-red-600');
-                    document.getElementById('modal-message').textContent = '您的訂單已成功送出，感謝您的購買！';
-                    validationModal.classList.remove('hidden');
 
                 } catch (error) {
                     console.error('表單提交失敗:', error);
                     modalHeading.textContent = '提交失敗';
                     modalHeading.classList.add('text-red-600');
                     modalHeading.classList.remove('text-green-600');
-                    document.getElementById('modal-message').textContent = '送出訂單時發生錯誤，請稍後再試。';
+                    modalMessage.innerHTML = '<p>送出訂單時發生錯誤，請稍後再試。</p>';
                     validationModal.classList.remove('hidden');
                 }
             });
